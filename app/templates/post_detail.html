@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Post by {{ post.user.username }}{% endblock %}
+
+{% block content %}
+<p><a href="{{ url_for('home.home') }}">Back to feed</a></p>
+<article>
+    <h1><a href="{{ url_for('home.user_profile', user_id=post.user.id) }}">{{ post.user.username }}</a></h1>
+    <p>{{ post.content }}</p>
+    <small>{{ post.created_at }}</small>
+    <p>Visibility: {{ post.visibility }}</p>
+
+    {% set user_liked = post.likes|selectattr("user_id", "equalto", session["user_id"])|list %}
+    {% if user_liked %}
+        <form method="POST" action="{{ url_for('post.unlike_post', post_id=post.id) }}"><button type="submit">Unlike</button></form>
+    {% else %}
+        <form method="POST" action="{{ url_for('post.like_post', post_id=post.id) }}"><button type="submit">Like</button></form>
+    {% endif %}
+
+    <h2>Comments</h2>
+    {% for comment in post.comments if comment.deleted_at is none %}
+        <p><strong>{{ comment.user.username }}</strong>: {{ comment.content }}</p>
+    {% else %}
+        <p>No comments yet.</p>
+    {% endfor %}
+
+    <form method="POST" action="{{ url_for('post.add_comment', post_id=post.id) }}">
+        <label for="content">Add a comment</label>
+        <input id="content" name="content" required>
+        <button type="submit">Comment</button>
+    </form>
+</article>
+{% endblock %}

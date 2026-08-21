@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}
+Notifications
+{% endblock %}
+
+{% block content %}
+
+<h1>Notifications</h1>
+
+<a href="{{ url_for('home.home') }}">
+    Back to Home
+</a>
+
+<br><br>
+
+
+<!-- ==================== MARK ALL AS READ ==================== -->
+
+<form
+    method="POST"
+    action="{{ url_for('notification.mark_all_as_read_html') }}"
+>
+
+    <button type="submit">
+        Mark All as Read
+    </button>
+
+</form>
+
+<hr>
+
+
+<!-- ==================== NOTIFICATIONS ==================== -->
+
+{% for notification in notifications %}
+
+    <div>
+
+        {% if notification.type == "LIKE" %}
+
+            <p>
+                <strong>
+                    {{ notification.actor.username }}
+                </strong>
+                liked your post.
+            </p>
+
+        {% elif notification.type == "COMMENT" %}
+
+            <p>
+                <strong>
+                    {{ notification.actor.username }}
+                </strong>
+                commented on your post.
+            </p>
+
+        {% elif notification.type == "FOLLOW" %}
+
+            <p>
+                <strong>
+                    {{ notification.actor.username }}
+                </strong>
+                started following you.
+            </p>
+
+        {% elif notification.type == "MENTION" %}
+
+            <p>
+                <strong>
+                    {{ notification.actor.username }}
+                </strong>
+                mentioned you.
+            </p>
+
+        {% else %}
+
+            <p>
+                <strong>
+                    {{ notification.actor.username }}
+                </strong>
+                performed an action.
+            </p>
+
+        {% endif %}
+
+
+        <!-- ==================== STATUS ==================== -->
+
+        {% if notification.is_read %}
+
+            <small>
+                Read
+            </small>
+
+        {% else %}
+
+            <strong>
+                Unread
+            </strong>
+
+        {% endif %}
+
+
+        <small>
+            {{ notification.created_at }}
+        </small>
+
+
+        <!-- ==================== MARK AS READ ==================== -->
+
+        {% if not notification.is_read %}
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'notification.mark_notification_as_read_html',
+                    notification_id=notification.id
+                ) }}"
+                style="display:inline;"
+            >
+
+                <button type="submit">
+                    Mark as Read
+                </button>
+
+            </form>
+
+        {% endif %}
+
+
+        <!-- ==================== DELETE ==================== -->
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'notification.delete_notification_html',
+                notification_id=notification.id
+            ) }}"
+            style="display:inline;"
+        >
+
+            <button type="submit">
+                Delete
+            </button>
+
+        </form>
+
+    </div>
+
+    <hr>
+
+{% else %}
+
+    <p>
+        No notifications yet.
+    </p>
+
+{% endfor %}
+
+{% endblock %}

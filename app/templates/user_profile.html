@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile_user.username }}{% endblock %}
+
+{% block content %}
+<p><a href="{{ url_for('home.users') }}">Back to people</a></p>
+<h1>{{ profile_user.username }}</h1>
+<p>{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
+{% if profile_user.bio %}<p>{{ profile_user.bio }}</p>{% endif %}
+<p>Followers: {{ counts.followers }} | Following: {{ counts.following }}</p>
+
+{% if profile_user.id != session["user_id"] %}
+    <form method="POST" action="{{ url_for('follow.follow_user', user_id=profile_user.id) }}" style="display:inline;">
+        <button type="submit">Follow</button>
+    </form>
+    <form method="POST" action="{{ url_for('follow.unfollow_user_html', user_id=profile_user.id) }}" style="display:inline;">
+        <button type="submit">Unfollow</button>
+    </form>
+{% endif %}
+
+<h2>Posts</h2>
+{% for post in posts %}
+    <article>
+        <p>{{ post.content }}</p>
+        <small>{{ post.created_at }}</small>
+        <p><a href="{{ url_for('post.post_detail', post_id=post.id) }}">View post</a></p>
+    </article>
+    <hr>
+{% else %}
+    <p>No visible posts yet.</p>
+{% endfor %}
+{% endblock %}

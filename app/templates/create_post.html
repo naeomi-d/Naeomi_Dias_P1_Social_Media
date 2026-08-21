@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}
+Create Post
+{% endblock %}
+
+{% block content %}
+
+<h1>Create Post</h1>
+
+<form method="POST">
+
+    <div>
+        <label for="content">Content</label>
+
+        <textarea
+            id="content"
+            name="content"
+            rows="5"
+            placeholder="What's on your mind?"
+        ></textarea>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="visibility">Visibility</label>
+
+        <select id="visibility" name="visibility">
+
+            <option value="PUBLIC">
+                Public
+            </option>
+
+            <option value="FOLLOWERS">
+                Followers
+            </option>
+
+            <option value="PRIVATE">
+                Private
+            </option>
+
+        </select>
+    </div>
+
+    <br>
+
+    <button type="submit">
+        Create Post
+    </button>
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}
+Edit Post
+{% endblock %}
+
+{% block content %}
+
+<h1>Edit Post</h1>
+
+<form method="POST">
+
+    <div>
+        <label for="content">Content</label>
+
+        <textarea
+            id="content"
+            name="content"
+            rows="5"
+            required
+        >{{ post.content }}</textarea>
+    </div>
+
+    <br>
+
+    <div>
+        <label for="visibility">Visibility</label>
+
+        <select id="visibility" name="visibility">
+
+            <option
+                value="PUBLIC"
+                {% if post.visibility == "PUBLIC" %}selected{% endif %}
+            >
+                Public
+            </option>
+
+            <option
+                value="FOLLOWERS"
+                {% if post.visibility == "FOLLOWERS" %}selected{% endif %}
+            >
+                Followers
+            </option>
+
+            <option
+                value="PRIVATE"
+                {% if post.visibility == "PRIVATE" %}selected{% endif %}
+            >
+                Private
+            </option>
+
+        </select>
+    </div>
+
+    <br>
+
+    <button type="submit">
+        Update Post
+    </button>
+
+</form>
+
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Bookmarks
+{% endblock %}
+
+{% block content %}
+
+<h1>My Bookmarks</h1>
+
+{% for bookmark in bookmarks %}
+
+    <article>
+
+        <h3>
+            {{ bookmark.post.user.username }}
+        </h3>
+
+        <p>
+            {{ bookmark.post.content }}
+        </p>
+
+        <small>
+            {{ bookmark.post.created_at }}
+        </small>
+
+        <br><br>
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'bookmark.remove_bookmark',
+                post_id=bookmark.post.id
+            ) }}"
+        >
+
+            <button type="submit">
+                Remove Bookmark
+            </button>
+
+        </form>
+
+    </article>
+
+    <hr>
+
+{% else %}
+
+    <p>No bookmarked posts yet.</p>
+
+{% endfor %}
+
+{% endblock %}

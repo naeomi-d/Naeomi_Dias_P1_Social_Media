@@ -1,0 +1,396 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+
+<h1>P1 Social Media</h1>
+<a href="{{ url_for('notification.notifications') }}">
+    Notifications
+</a>
+|
+<a href="{{ url_for('home.users') }}">
+    Users
+</a>
+
+<hr>
+
+
+<!-- ==================== USERS ==================== -->
+
+<h2>Registered Users</h2>
+
+{% for user in users %}
+
+    <div>
+
+        <strong>
+            <a href="{{ url_for('home.user_profile', user_id=user.id) }}">
+                {{ user.username }}
+            </a>
+        </strong>
+
+        <span>
+            {{ user.first_name }} {{ user.last_name }}
+        </span>
+
+        {% if user.id != session["user_id"] %}
+
+            <!-- FOLLOW -->
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'follow.follow_user',
+                    user_id=user.id
+                ) }}"
+                style="display:inline;"
+            >
+
+                <button type="submit">
+                    Follow
+                </button>
+
+            </form>
+
+
+            <!-- UNFOLLOW -->
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'follow.unfollow_user_html',
+                    user_id=user.id
+                ) }}"
+                style="display:inline;"
+            >
+
+                <button type="submit">
+                    Unfollow
+                </button>
+
+            </form>
+
+
+            <!-- REPORT USER -->
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'report.report_user',
+                    user_id=user.id
+                ) }}"
+                style="display:inline;"
+            >
+
+                <input
+                    type="text"
+                    name="reason"
+                    placeholder="Reason"
+                    required
+                >
+
+                <input
+                    type="text"
+                    name="description"
+                    placeholder="Description"
+                >
+
+                <button type="submit">
+                    Report User
+                </button>
+
+            </form>
+
+        {% endif %}
+
+    </div>
+
+{% else %}
+
+    <p>No users registered yet.</p>
+
+{% endfor %}
+
+
+<hr>
+
+
+<!-- ==================== POSTS ==================== -->
+
+<h2>Posts</h2>
+
+{% for post in posts %}
+
+    <article>
+
+        <!-- POST INFORMATION -->
+
+        <h3>
+            <a href="{{ url_for('home.user_profile', user_id=post.user.id) }}">
+                {{ post.user.username }}
+            </a>
+        </h3>
+
+        <p>
+            {{ post.content }}
+        </p>
+
+        <small>
+            {{ post.created_at }}
+        </small>
+
+        <p>
+            <a href="{{ url_for('post.post_detail', post_id=post.id) }}">
+                View post
+            </a>
+        </p>
+
+
+        <!-- ==================== LIKE SECTION ==================== -->
+
+        <p>
+            Likes: {{ post.likes|length }}
+        </p>
+
+        {% set user_liked = post.likes
+            |selectattr(
+                "user_id",
+                "equalto",
+                session["user_id"]
+            )
+            |list
+        %}
+
+        {% if user_liked %}
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'post.unlike_post',
+                    post_id=post.id
+                ) }}"
+            >
+
+                <button type="submit">
+                    Unlike
+                </button>
+
+            </form>
+
+        {% else %}
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'post.like_post',
+                    post_id=post.id
+                ) }}"
+            >
+
+                <button type="submit">
+                    Like
+                </button>
+
+            </form>
+
+        {% endif %}
+
+
+        <!-- ==================== BOOKMARK ==================== -->
+
+        {% set user_bookmarked = post.bookmarks
+            |selectattr(
+                "user_id",
+                "equalto",
+                session["user_id"]
+            )
+            |list
+        %}
+
+        {% if user_bookmarked %}
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'bookmark.remove_bookmark',
+                    post_id=post.id
+                ) }}"
+            >
+
+                <button type="submit">
+                    Remove Bookmark
+                </button>
+
+            </form>
+
+        {% else %}
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'bookmark.bookmark_post',
+                    post_id=post.id
+                ) }}"
+            >
+
+                <button type="submit">
+                    Bookmark
+                </button>
+
+            </form>
+
+        {% endif %}
+
+
+        <!-- ==================== REPORT POST ==================== -->
+
+        {% if post.user_id != session["user_id"] %}
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'report.report_post',
+                    post_id=post.id
+                ) }}"
+            >
+
+                <input
+                    type="text"
+                    name="reason"
+                    placeholder="Reason"
+                    required
+                >
+
+                <input
+                    type="text"
+                    name="description"
+                    placeholder="Description"
+                >
+
+                <button type="submit">
+                    Report
+                </button>
+
+            </form>
+
+        {% endif %}
+
+
+        <!-- ==================== COMMENTS ==================== -->
+
+        <h4>Comments</h4>
+
+        {% for comment in post.comments %}
+
+            {% if comment.deleted_at is none %}
+
+                <div>
+
+                    <strong>
+                        {{ comment.user.username }}
+                    </strong>
+
+                    <span>
+                        {{ comment.content }}
+                    </span>
+
+                    {% if comment.user_id == session["user_id"] %}
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'post.delete_comment',
+                                comment_id=comment.id
+                            ) }}"
+                            style="display:inline;"
+                        >
+
+                            <button type="submit">
+                                Delete
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        {% else %}
+
+            <p>No comments yet.</p>
+
+        {% endfor %}
+
+
+        <!-- ==================== ADD COMMENT ==================== -->
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'post.add_comment',
+                post_id=post.id
+            ) }}"
+        >
+
+            <input
+                type="text"
+                name="content"
+                placeholder="Write a comment..."
+                required
+            >
+
+            <button type="submit">
+                Comment
+            </button>
+
+        </form>
+
+
+        <!-- ==================== POST OWNER ACTIONS ==================== -->
+
+        {% if post.user_id == session["user_id"] %}
+
+            <br><br>
+
+            <a
+                href="{{ url_for(
+                    'post.edit_post',
+                    post_id=post.id
+                ) }}"
+            >
+                Edit
+            </a>
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'post.delete_post',
+                    post_id=post.id
+                ) }}"
+                style="display:inline;"
+            >
+
+                <button type="submit">
+                    Delete
+                </button>
+
+            </form>
+
+        {% endif %}
+
+    </article>
+
+    <hr>
+
+{% else %}
+
+    <p>No posts yet.</p>
+
+{% endfor %}
+
+{% endblock %}
