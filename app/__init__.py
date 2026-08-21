@@ -91,4 +91,11 @@ def create_app():
     app.register_blueprint(report_api_bp)
     app.register_blueprint(admin_api_bp)
 
+    from flask import send_from_directory
+
+    @app.route("/uploads/<path:filename>")
+    def uploaded_file(filename):
+        return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
     return app
+

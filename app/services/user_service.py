@@ -41,3 +41,17 @@ class UserService:
             "followers": FollowService.get_follower_count(user_id),
             "following": FollowService.get_following_count(user_id),
         }
+
+    @staticmethod
+    def update_avatar(user_id, image_file):
+        from app.services.file_service import FileService
+        user = UserService.get_user(user_id)
+        if image_file:
+            old_picture = user.profile_picture
+            new_path = FileService.save_upload(image_file, "profile_pictures")
+            user.profile_picture = new_path
+            UserDAO.update(user)
+            if old_picture:
+                FileService.cleanup_file(old_picture)
+        return user
+

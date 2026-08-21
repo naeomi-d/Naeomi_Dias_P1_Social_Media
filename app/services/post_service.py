@@ -19,7 +19,7 @@ class PostService:
     # ==================== CREATE POST ====================
 
     @staticmethod
-    def create_post(user_id, content, visibility):
+    def create_post(user_id, content, visibility, image_path=None):
 
         if not content or not content.strip():
             raise ValueError(
@@ -43,8 +43,10 @@ class PostService:
             user_id=user_id,
             content=clean_content,
             visibility=visibility,
+            image_path=image_path,
             status="ACTIVE"
         )
+
 
         PostDAO.create(post)
 
@@ -138,8 +140,9 @@ class PostService:
     def update_post(
         post_id,
         user_id,
-        content,
-        visibility
+        content=None,
+        visibility=None,
+        image_path=None
     ):
 
         post = PostDAO.find_by_id(post_id)
@@ -185,6 +188,14 @@ class PostService:
 
         post.content = clean_content
         post.visibility = visibility
+
+        if image_path is not None and image_path != post.image_path:
+            from app.services.file_service import FileService
+            old_image = post.image_path
+            post.image_path = image_path
+            if old_image:
+                FileService.cleanup_file(old_image)
+
 
         # Remove old hashtag relationships
 

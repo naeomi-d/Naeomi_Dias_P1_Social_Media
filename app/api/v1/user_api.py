@@ -34,6 +34,22 @@ def update_current_user():
         return error_response(str(error), 422)
 
 
+@user_api_bp.post("/me/avatar")
+@jwt_required()
+def upload_avatar():
+    if "avatar" not in request.files and "image" not in request.files:
+        return error_response("An image file is required.", 400)
+    file_storage = request.files.get("avatar") or request.files.get("image")
+    if not file_storage or not file_storage.filename:
+        return error_response("An image file is required.", 400)
+    try:
+        user = UserService.update_avatar(current_user_id(), file_storage)
+        return jsonify({"message": "Avatar uploaded successfully.", "user": serialize_user(user, True)}), 200
+    except ValueError as error:
+        return error_response(str(error), 400)
+
+
+
 @user_api_bp.get("/<int:user_id>")
 @jwt_required()
 def get_user(user_id):
