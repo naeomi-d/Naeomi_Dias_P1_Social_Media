@@ -8,5 +8,5 @@ health_bp = Blueprint("health", __name__)
 def health_check():
     return {
         "status": "success",
-        "message": "P1 Social Media API is running"
+        "message": "Postly API is running"
     }, 200

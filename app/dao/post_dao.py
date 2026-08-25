@@ -14,12 +14,16 @@ class PostDAO:
         return Post.query.filter_by(id=post_id).first()
 
     @staticmethod
-    def find_active_posts():
+    def find_active_posts(page=1, per_page=10):
         return (
             Post.query
             .filter_by(status="ACTIVE")
             .order_by(Post.created_at.desc())
-            .all()
+            .paginate(
+                page=page,
+                per_page=per_page,
+                error_out=False
+            )
         )
 
     @staticmethod

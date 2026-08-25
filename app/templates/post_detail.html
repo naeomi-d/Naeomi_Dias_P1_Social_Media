@@ -1,33 +1,184 @@
 {% extends "base.html" %}
 
-{% block title %}Post by {{ post.user.username }}{% endblock %}
+{% block title %}
+Post by {{ post.user.username }}
+{% endblock %}
 
 {% block content %}
-<p><a href="{{ url_for('home.home') }}">Back to feed</a></p>
-<article>
-    <h1><a href="{{ url_for('home.user_profile', user_id=post.user.id) }}">{{ post.user.username }}</a></h1>
-    <p>{{ post.content }}</p>
-    <small>{{ post.created_at }}</small>
-    <p>Visibility: {{ post.visibility }}</p>
 
-    {% set user_liked = post.likes|selectattr("user_id", "equalto", session["user_id"])|list %}
-    {% if user_liked %}
-        <form method="POST" action="{{ url_for('post.unlike_post', post_id=post.id) }}"><button type="submit">Unlike</button></form>
-    {% else %}
-        <form method="POST" action="{{ url_for('post.like_post', post_id=post.id) }}"><button type="submit">Like</button></form>
-    {% endif %}
+<div class="page-container">
 
-    <h2>Comments</h2>
-    {% for comment in post.comments if comment.deleted_at is none %}
-        <p><strong>{{ comment.user.username }}</strong>: {{ comment.content }}</p>
-    {% else %}
-        <p>No comments yet.</p>
-    {% endfor %}
+    <div class="page-header">
+        <a href="{{ url_for('home.home') }}" class="back-link">
+            ← Back to feed
+        </a>
 
-    <form method="POST" action="{{ url_for('post.add_comment', post_id=post.id) }}">
-        <label for="content">Add a comment</label>
-        <input id="content" name="content" required>
-        <button type="submit">Comment</button>
-    </form>
-</article>
+        <h1>Post</h1>
+        <p>View the post and join the conversation.</p>
+    </div>
+
+
+    <article class="post-card post-detail-card">
+
+        <div class="post-header">
+
+            <a
+                href="{{ url_for('home.user_profile', user_id=post.user.id) }}"
+                class="post-author"
+            >
+                @{{ post.user.username }}
+            </a>
+
+            <span class="post-meta">
+                {{ post.created_at }}
+            </span>
+
+        </div>
+
+
+        <div class="post-content">
+            {{ post.content }}
+        </div>
+
+
+        {% if post.image_path %}
+
+            <div class="post-image-container">
+
+                <img
+                    src="{{ post.image_path }}"
+                    alt="Post Image"
+                    class="post-image post-detail-image"
+                >
+
+            </div>
+
+        {% endif %}
+
+
+        <div class="post-visibility">
+            Visibility:
+            <strong>{{ post.visibility }}</strong>
+        </div>
+
+
+        <div class="post-actions">
+
+            {% set user_liked = post.likes
+                |selectattr(
+                    "user_id",
+                    "equalto",
+                    session["user_id"]
+                )
+                |list
+            %}
+
+            <span class="like-count">
+                ❤️ {{ post.likes|length }} likes
+            </span>
+
+            {% if user_liked %}
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'post.unlike_post',
+                        post_id=post.id
+                    ) }}"
+                >
+                    <button
+                        type="submit"
+                        class="btn btn-secondary"
+                    >
+                        Unlike
+                    </button>
+                </form>
+
+            {% else %}
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'post.like_post',
+                        post_id=post.id
+                    ) }}"
+                >
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Like
+                    </button>
+                </form>
+
+            {% endif %}
+
+        </div>
+
+        <div class="comments-section">
+
+            <h2>Comments</h2>
+
+            {% for comment in post.comments if comment.deleted_at is none %}
+
+                <div class="comment-card">
+
+                    <strong>
+                        @{{ comment.user.username }}
+                    </strong>
+
+                    <p>
+                        {{ comment.content }}
+                    </p>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-state">
+                    No comments yet. Be the first to comment.
+                </div>
+
+            {% endfor %}
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'post.add_comment',
+                    post_id=post.id
+                ) }}"
+                class="comment-form"
+            >
+
+                <label for="content">
+                    Add a comment
+                </label>
+
+                <div class="comment-input-row">
+
+                    <input
+                        id="content"
+                        name="content"
+                        type="text"
+                        placeholder="Write a comment..."
+                        required
+                    >
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        Comment
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </article>
+
+</div>
+
 {% endblock %}

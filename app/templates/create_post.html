@@ -6,49 +6,114 @@ Create Post
 
 {% block content %}
 
-<h1>Create Post</h1>
+<div class="page-container narrow-container">
 
-<form method="POST">
+    <div class="page-header">
 
-    <div>
-        <label for="content">Content</label>
+        <h1>Create Post</h1>
 
-        <textarea
-            id="content"
-            name="content"
-            rows="5"
-            placeholder="What's on your mind?"
-        ></textarea>
+        <p>
+            Share something with your community.
+        </p>
+
     </div>
 
-    <br>
 
-    <div>
-        <label for="visibility">Visibility</label>
+    <div class="form-card">
 
-        <select id="visibility" name="visibility">
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+        >
+            <div class="form-group">
 
-            <option value="PUBLIC">
-                Public
-            </option>
+                <label for="content">
+                    What's on your mind?
+                </label>
 
-            <option value="FOLLOWERS">
-                Followers
-            </option>
+                <textarea
+                    id="content"
+                    name="content"
+                    rows="7"
+                    placeholder="Write something..."
+                    required
+                ></textarea>
 
-            <option value="PRIVATE">
-                Private
-            </option>
+            </div>
 
-        </select>
+
+            <div class="form-group">
+
+                <label for="image">
+                    Post Image
+                    <span class="optional-label">
+                        Optional
+                    </span>
+                </label>
+
+                <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    accept="image/jpeg,image/png,image/gif"
+                    class="file-input"
+                >
+
+                <small class="form-help">
+                    JPG, JPEG, PNG or GIF. Maximum size: 5 MB.
+                </small>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="visibility">
+                    Visibility
+                </label>
+
+                <select
+                    id="visibility"
+                    name="visibility"
+                >
+
+                    <option value="PUBLIC">
+                        Public — Everyone can see this
+                    </option>
+
+                    <option value="FOLLOWERS">
+                        Followers — Only your followers
+                    </option>
+
+                    <option value="PRIVATE">
+                        Private — Only you
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-actions">
+
+                <a
+                    href="{{ url_for('home.home') }}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Create Post
+                </button>
+
+            </div>
+
+        </form>
+
     </div>
 
-    <br>
-
-    <button type="submit">
-        Create Post
-    </button>
-
-</form>
+</div>
 
 {% endblock %}

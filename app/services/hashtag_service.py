@@ -3,6 +3,9 @@ from app.dao.post_hashtag_dao import PostHashtagDAO
 from app.dao.post_dao import PostDAO
 from app.services.post_service import PostService
 
+from app.exceptions.resource_exceptions import ResourceNotFoundError
+from app.exceptions.validation_exceptions import ValidationError
+from app.exceptions.authorization_exceptions import AuthorizationError
 
 class HashtagService:
 
@@ -14,13 +17,13 @@ class HashtagService:
     def get_hashtag(name):
         hashtag = HashtagDAO.find_by_name(name.lower().lstrip("#"))
         if not hashtag:
-            raise ValueError("Hashtag not found.")
+            raise ResourceNotFoundError("Hashtag not found.")
         return hashtag
 
     @staticmethod
     def search_hashtags(query):
         if not query or not query.strip():
-            raise ValueError("Search query is required.")
+            raise ValidationError("Search query is required.")
         return HashtagDAO.search(query.strip().lower().lstrip("#"))
 
     @staticmethod
@@ -31,7 +34,7 @@ class HashtagService:
         for post in posts:
             try:
                 visible_posts.append(PostService.get_post_for_viewer(post.id, viewer_id))
-            except (ValueError, PermissionError):
+            except (ResourceNotFoundError, AuthorizationError):
                 continue
         return visible_posts
 

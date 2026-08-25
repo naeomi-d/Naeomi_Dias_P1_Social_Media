@@ -6,6 +6,9 @@ from app.dao.report_dao import ReportDAO
 from app.dao.post_dao import PostDAO
 from app.dao.user_dao import UserDAO
 
+from app.exceptions.resource_exceptions import ResourceNotFoundError
+from app.exceptions.authorization_exceptions import AuthorizationError
+from app.exceptions.validation_exceptions import ValidationError
 
 class ReportService:
 
@@ -20,17 +23,17 @@ class ReportService:
         post = PostDAO.find_by_id(post_id)
 
         if not post:
-            raise ValueError(
+            raise ResourceNotFoundError(
                 "Post not found."
             )
 
         if post.status == "DELETED":
-            raise ValueError(
+            raise ValidationError(
                 "Cannot report a deleted post."
             )
 
         if not reason or not reason.strip():
-            raise ValueError(
+            raise ValidationError(
                 "Report reason is required."
             )
 
@@ -59,17 +62,17 @@ class ReportService:
         )
 
         if not user:
-            raise ValueError(
+            raise ResourceNotFoundError(
                 "User not found."
             )
 
         if reporter_id == reported_user_id:
-            raise ValueError(
+            raise ValidationError(
                 "You cannot report yourself."
             )
 
         if not reason or not reason.strip():
-            raise ValueError(
+            raise ValidationError(
                 "Report reason is required."
             )
 
@@ -98,16 +101,16 @@ class ReportService:
     def get_report(report_id, requester_id, can_moderate=False):
         report = ReportDAO.find_by_id(report_id)
         if not report:
-            raise ValueError("Report not found.")
+            raise ResourceNotFoundError("Report not found.")
         if not can_moderate and report.reporter_id != requester_id:
-            raise PermissionError("You cannot view another user's report.")
+            raise AuthorizationError("You cannot view another user's report.")
         return report
 
     @staticmethod
     def cancel_report(report_id, reporter_id):
         report = ReportService.get_report(report_id, reporter_id)
         if report.status != "PENDING":
-            raise ValueError("Only pending reports can be cancelled.")
+            raise ValidationError("Only pending reports can be cancelled.")
         ReportDAO.delete(report)
 
 
@@ -123,7 +126,7 @@ class ReportService:
         )
 
         if not report:
-            raise ValueError(
+            raise ResourceNotFoundError(
                 "Report not found."
             )
 
@@ -133,7 +136,7 @@ class ReportService:
         }
 
         if status not in allowed_statuses:
-            raise ValueError(
+            raise ValidationError(
                 "Invalid report status."
             )
 

@@ -1,32 +1,531 @@
 {% extends "base.html" %}
 
-{% block title %}{{ profile_user.username }}{% endblock %}
+{% block title %}
+{{ profile_user.username }} · Postly
+{% endblock %}
 
 {% block content %}
-<p><a href="{{ url_for('home.users') }}">Back to people</a></p>
-<h1>{{ profile_user.username }}</h1>
-<p>{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
-{% if profile_user.bio %}<p>{{ profile_user.bio }}</p>{% endif %}
-<p>Followers: {{ counts.followers }} | Following: {{ counts.following }}</p>
+
+<div class="profile-page">
+
+    <div class="profile-card shadow-soft">
+
+        <div class="profile-header">
+
+
+            <div class="profile-avatar-wrapper">
+
+                {% if profile_user.profile_picture %}
+
+                    <img
+                        src="{{ profile_user.profile_picture }}"
+                        alt="{{ profile_user.username }}'s profile picture"
+                        class="profile-avatar"
+                    >
+
+                {% else %}
+
+                    <div class="profile-avatar profile-avatar-placeholder">
+                        {{ profile_user.username[0]|upper }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <div class="profile-info">
+
+                <h1 class="profile-username">
+                    @{{ profile_user.username }}
+                </h1>
+
+                <p class="profile-name">
+                    {{ profile_user.first_name }}
+                    {{ profile_user.last_name }}
+                </p>
+
+                {% if profile_user.bio %}
+
+                    <p class="profile-bio">
+                        {{ profile_user.bio }}
+                    </p>
+
+                {% else %}
+
+                    <p class="profile-bio text-muted">
+                        No bio yet.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="profile-stats">
+
+            <div class="profile-stat">
+
+                <strong>
+                    {{ posts|length }}
+                </strong>
+
+                <span>
+                    Posts
+                </span>
+
+            </div>
+
+
+            <a
+                href="{{ url_for(
+                    'home.followers',
+                    user_id=profile_user.id
+                ) }}"
+                class="profile-stat text-dark"
+                >
+
+                <strong>
+                    {{ counts.followers }}
+                </strong>
+
+                <span>
+                    Followers
+                </span>
+
+            </a>
+
+
+            <a
+                href="{{ url_for(
+                    'home.following',
+                    user_id=profile_user.id
+                ) }}"
+                class="profile-stat text-dark"
+            >
+
+                <strong>
+                    {{ counts.following }}
+                </strong>
+
+                <span>
+                    Following
+                </span>
+
+            </a>
+        </div>
+
+
+<div class="profile-actions">
+
+    {% if profile_user.id == session["user_id"] %}
+
+        <a
+            href="{{ url_for('home.users') }}"
+            class="btn btn-outline-secondary"
+        >
+            Find People
+        </a>
+
+    {% else %}
+
+        {% if is_following %}
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'follow.unfollow_user_html',
+                    user_id=profile_user.id
+                ) }}"
+            >
+
+                <button
+                    type="submit"
+                    class="btn btn-outline-dark"
+                >
+                    Following
+                </button>
+
+            </form>
+
+        {% else %}
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'follow.follow_user',
+                    user_id=profile_user.id
+                ) }}"
+            >
+
+                <button
+                    type="submit"
+                    class="btn btn-dark"
+                >
+                    Follow
+                </button>
+
+            </form>
+
+        {% endif %}
+
+
+        <button
+            type="button"
+            class="btn btn-outline-danger"
+            data-bs-toggle="collapse"
+            data-bs-target="#reportUserForm"
+        >
+            Report User
+        </button>
+
+    {% endif %}
+
+</div>
+
 
 {% if profile_user.id != session["user_id"] %}
-    <form method="POST" action="{{ url_for('follow.follow_user', user_id=profile_user.id) }}" style="display:inline;">
-        <button type="submit">Follow</button>
-    </form>
-    <form method="POST" action="{{ url_for('follow.unfollow_user_html', user_id=profile_user.id) }}" style="display:inline;">
-        <button type="submit">Unfollow</button>
-    </form>
+
+    <div
+        class="collapse mt-3"
+        id="reportUserForm"
+    >
+
+        <div class="form-card">
+
+            <h5>
+                Report @{{ profile_user.username }}
+            </h5>
+
+            <form
+                method="POST"
+                action="{{ url_for(
+                    'report.report_user',
+                    user_id=profile_user.id
+                ) }}"
+            >
+
+                <div class="form-group">
+
+                    <label for="reason">
+                        Reason
+                    </label>
+
+                    <input
+                        type="text"
+                        id="reason"
+                        name="reason"
+                        class="form-control"
+                        placeholder="Why are you reporting this user?"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="description">
+                        Description
+                        <span class="optional-label">
+                            Optional
+                        </span>
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="4"
+                        class="form-control"
+                        placeholder="Provide more details..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        class="btn btn-danger"
+                    >
+                        Submit Report
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
 {% endif %}
 
-<h2>Posts</h2>
-{% for post in posts %}
-    <article>
-        <p>{{ post.content }}</p>
-        <small>{{ post.created_at }}</small>
-        <p><a href="{{ url_for('post.post_detail', post_id=post.id) }}">View post</a></p>
-    </article>
-    <hr>
-{% else %}
-    <p>No visible posts yet.</p>
-{% endfor %}
+
+    {% if profile_user.id == session["user_id"] %}
+
+        <div class="dashboard-card shadow-soft">
+
+            <h3 class="section-title">
+                Profile Picture
+            </h3>
+
+            <p class="text-muted">
+                Upload a new profile picture.
+            </p>
+
+            <form
+                method="POST"
+                action="{{ url_for('home.upload_avatar') }}"
+                enctype="multipart/form-data"
+            >
+
+                <div class="mb-3">
+
+                    <input
+                        type="file"
+                        name="avatar"
+                        accept="image/*"
+                        class="form-control"
+                        required
+                    >
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-dark"
+                >
+                    Upload Avatar
+                </button>
+
+            </form>
+
+        </div>
+
+    {% endif %}
+
+<div class="profile-posts">
+
+    <div class="section-header">
+
+        <h2>
+            Posts
+        </h2>
+
+    </div>
+
+
+    {% for post in posts %}
+
+        <article class="post-card shadow-soft">
+
+            <div class="post-header">
+
+                <a
+                    href="{{ url_for(
+                        'home.user_profile',
+                        user_id=profile_user.id
+                    ) }}"
+                    class="post-author"
+                >
+                    @{{ profile_user.username }}
+                </a>
+
+            </div>
+
+
+            <div class="post-content">
+
+                {{ post.content }}
+
+            </div>
+
+
+            {% if post.image_path %}
+
+                <img
+                    src="{{ post.image_path }}"
+                    alt="Post Image"
+                    class="post-image"
+                >
+
+            {% endif %}
+
+            <div class="post-meta">
+
+                {{ post.created_at.strftime(
+                    "%d %b %Y, %I:%M %p"
+                ) }}
+
+            </div>
+
+
+            <div class="post-footer">
+
+
+                <a
+                    href="{{ url_for(
+                        'post.post_detail',
+                        post_id=post.id
+                    ) }}"
+                    class="btn btn-sm btn-outline-secondary"
+                >
+                    View Post
+                </a>
+
+
+                {% if post.user_id == session["user_id"] %}
+
+                    <a
+                        href="{{ url_for(
+                            'post.edit_post',
+                            post_id=post.id
+                        ) }}"
+                        class="btn btn-sm btn-outline-primary"
+                    >
+                        Edit
+                    </a>
+
+                {% endif %}
+
+
+                {% if post.user_id != session["user_id"] %}
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#reportPost{{ post.id }}"
+                    >
+                        Report Post
+                    </button>
+
+                {% endif %}
+
+            </div>
+
+            {% if post.user_id != session["user_id"] %}
+
+                <div
+                    class="collapse mt-3"
+                    id="reportPost{{ post.id }}"
+                >
+
+                    <div class="form-card">
+
+                        <h5>
+                            Report Post
+                        </h5>
+
+                        <p class="text-muted">
+                            Report @{{ profile_user.username }}'s post.
+                        </p>
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'report.report_post',
+                                post_id=post.id
+                            ) }}"
+                        >
+
+                            <div class="form-group mb-3">
+
+                                <label
+                                    for="reason{{ post.id }}"
+                                >
+                                    Reason
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="reason{{ post.id }}"
+                                    name="reason"
+                                    class="form-control"
+                                    placeholder="Why are you reporting this post?"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group mb-3">
+
+                                <label
+                                    for="description{{ post.id }}"
+                                >
+                                    Description
+
+                                    <span class="optional-label">
+                                        Optional
+                                    </span>
+
+                                </label>
+
+                                <textarea
+                                    id="description{{ post.id }}"
+                                    name="description"
+                                    rows="3"
+                                    class="form-control"
+                                    placeholder="Provide more details..."
+                                ></textarea>
+
+                            </div>
+
+
+                            <div class="form-actions">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-danger"
+                                >
+                                    Submit Report
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </article>
+
+    {% else %}
+
+        <div class="empty-state shadow-soft">
+
+            <h4>
+                No posts yet
+            </h4>
+
+            <p class="text-muted mb-0">
+
+                {% if profile_user.id == session["user_id"] %}
+
+                    You haven't shared anything yet.
+
+                {% else %}
+
+                    {{ profile_user.username }}
+                    hasn't shared any visible posts yet.
+
+                {% endif %}
+
+            </p>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+</div>
+
 {% endblock %}

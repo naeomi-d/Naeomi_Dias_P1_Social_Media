@@ -6,6 +6,9 @@ from app.services.post_service import PostService
 from app.models.comment import Comment
 from app.services.notification_service import NotificationService
 
+from app.exceptions.resource_exceptions import ResourceNotFoundError
+from app.exceptions.validation_exceptions import ValidationError
+from app.exceptions.authorization_exceptions import AuthorizationError
 
 class CommentService:
 
@@ -18,7 +21,7 @@ class CommentService:
     def get_comment(comment_id):
         comment = CommentDAO.find_by_id(comment_id)
         if not comment or comment.deleted_at is not None:
-            raise ValueError("Comment not found.")
+            raise ResourceNotFoundError("Comment not found.")
         return comment
 
     @staticmethod
@@ -32,7 +35,7 @@ class CommentService:
         post = PostDAO.find_by_id(post_id)
 
         if not post or post.status != "ACTIVE":
-            raise ValueError(
+            raise ResourceNotFoundError(
                 "Post not found."
             )
 
@@ -59,10 +62,10 @@ class CommentService:
         comment = CommentService.get_comment(comment_id)
 
         if comment.user_id != user_id:
-            raise PermissionError("You cannot edit another user's comment.")
+            raise AuthorizationError("You cannot edit another user's comment.")
 
         if not content or not content.strip():
-            raise ValueError("Comment cannot be empty.")
+            raise ValidationError("Comment cannot be empty.")
 
         comment.content = content.strip()
         return CommentDAO.update(comment)
@@ -73,17 +76,17 @@ class CommentService:
         comment = CommentDAO.find_by_id(comment_id)
 
         if not comment:
-            raise ValueError(
+            raise ResourceNotFoundError(
                 "Comment not found."
             )
 
         if comment.deleted_at is not None:
-            raise ValueError(
+            raise ValidationError(
                 "Comment has already been deleted."
             )
 
         if comment.user_id != user_id:
-            raise PermissionError(
+            raise AuthorizationError(
                 "You cannot delete another user's comment."
             )
 

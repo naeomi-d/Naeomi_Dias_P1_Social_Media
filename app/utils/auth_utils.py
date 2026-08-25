@@ -21,12 +21,10 @@ def login_required(function):
 
 
 def has_any_role(*allowed_roles):
-    """Return whether the authenticated JWT role is one of allowed_roles."""
     return get_jwt().get("role") in allowed_roles
 
 
 def role_required(*required_roles):
-    """Require a JWT whose role claim is one of the allowed application roles."""
 
     if not required_roles:
         raise ValueError("At least one role is required.")
@@ -48,3 +46,22 @@ def role_required(*required_roles):
         return wrapper
 
     return decorator
+
+
+def browser_role_required(*allowed_roles):
+
+    def decorator(function):
+
+        @wraps(function)
+        @login_required
+        def wrapper(*args, **kwargs):
+
+            if session.get("role") not in allowed_roles:
+                return "Forbidden", 403
+
+            return function(*args, **kwargs)
+
+        return wrapper
+
+    return decorator
+

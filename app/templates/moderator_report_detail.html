@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+
+{% block title %}Review Report #{{ report.id }}{% endblock %}
+
+{% block content %}
+
+<div class="page-header mb-4">
+
+    <h1>Review Report #{{ report.id }}</h1>
+
+    <p class="text-muted">
+        Inspect the reported content before taking moderation action.
+    </p>
+
+</div>
+
+
+<div class="dashboard-card mb-4">
+
+    <h2 class="h5 mb-3">
+        Report Information
+    </h2>
+
+    <div class="row">
+
+        <div class="col-md-6 mb-3">
+
+            <strong>Reporter</strong>
+
+            <p class="text-muted mb-0">
+                User #{{ report.reporter_id }}
+            </p>
+
+        </div>
+
+
+        <div class="col-md-6 mb-3">
+
+            <strong>Reason</strong>
+
+            <p class="text-muted mb-0">
+                {{ report.reason }}
+            </p>
+
+        </div>
+
+
+        <div class="col-12">
+
+            <strong>Description</strong>
+
+            {% if report.description %}
+
+                <p class="text-muted mb-0">
+                    {{ report.description }}
+                </p>
+
+            {% else %}
+
+                <p class="text-muted mb-0">
+                    No description provided.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+{% if post %}
+
+<div class="dashboard-card mb-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <div>
+
+            <h2 class="h4 mb-1">
+                Reported Post
+            </h2>
+
+            <p class="text-muted mb-0">
+                Post #{{ post.id }}
+            </p>
+
+        </div>
+
+        <span class="badge text-bg-danger">
+            Reported
+        </span>
+
+    </div>
+
+    <div class="mb-3">
+
+        <strong>
+            Author
+        </strong>
+
+        <p class="mb-0">
+
+            <a
+                href="{{ url_for(
+                    'home.user_profile',
+                    user_id=post.user_id
+                ) }}"
+            >
+                User #{{ post.user_id }}
+            </a>
+
+        </p>
+
+    </div>
+
+
+    <div class="border rounded p-3 mb-3">
+
+        {% if post.content %}
+
+            <p class="mb-0">
+                {{ post.content }}
+            </p>
+
+        {% else %}
+
+            <p class="text-muted mb-0">
+                No text content.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    {% if post.image_path %}
+
+        <div class="mb-3">
+
+            <img
+                src="{{ post.image_path }}"
+                alt="Reported post image"
+                class="img-fluid rounded"
+                style="max-width: 500px;"
+            >
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="text-muted small mb-4">
+
+        Posted:
+        {{ post.created_at | ist_datetime }}
+
+    </div>
+
+
+    <div class="d-flex gap-2">
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'moderator.dismiss_report',
+                report_id=report.id
+            ) }}"
+        >
+
+            <button
+                type="submit"
+                class="btn btn-outline-secondary"
+            >
+                Dismiss Report
+            </button>
+
+        </form>
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'moderator.remove_reported_post',
+                report_id=report.id
+            ) }}"
+        >
+
+            <button
+                type="submit"
+                class="btn btn-danger"
+            >
+                Remove Post
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% if user %}
+
+<div class="dashboard-card mb-4">
+
+    <h2 class="h4 mb-3">
+        Reported User
+    </h2>
+
+    <p>
+        <strong>Username:</strong>
+        {{ user.username }}
+    </p>
+
+    <p>
+        <strong>Name:</strong>
+        {{ user.first_name }} {{ user.last_name }}
+    </p>
+
+    <p>
+        <strong>Status:</strong>
+
+        {% if user.is_active %}
+
+            <span class="badge text-bg-success">
+                Active
+            </span>
+
+        {% else %}
+
+            <span class="badge text-bg-danger">
+                Inactive
+            </span>
+
+        {% endif %}
+
+    </p>
+
+
+    <div class="d-flex gap-2">
+
+        <a
+            href="{{ url_for(
+                'home.user_profile',
+                user_id=user.id
+            ) }}"
+            class="btn btn-outline-primary"
+        >
+            View Profile
+        </a>
+
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'moderator.deactivate_reported_user',
+                report_id=report.id
+            ) }}"
+        >
+
+            <button
+                type="submit"
+                class="btn btn-danger"
+            >
+                Deactivate User
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<a
+    href="{{ url_for('moderator.dashboard') }}"
+    class="btn btn-secondary"
+>
+    ← Back to Moderator Dashboard
+</a>
+
+{% endblock %}

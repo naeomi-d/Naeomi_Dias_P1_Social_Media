@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}
+Following · Postly
+{% endblock %}
+
+{% block content %}
+
+<div class="social-page">
+
+    <a
+        href="{{ url_for(
+            'home.user_profile',
+            user_id=profile_user.id
+        ) }}"
+        class="back-link"
+    >
+        ← Back to Profile
+    </a>
+
+    <div class="page-header">
+
+        <h1>
+            Following
+        </h1>
+
+        <p>
+            People @{{ profile_user.username }} follows
+        </p>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        {% for user in users %}
+
+            <div class="col-md-6">
+
+                <div class="social-user-card shadow-soft">
+
+                    <div class="social-user-avatar">
+
+                        {% if user.profile_picture %}
+
+                            <img
+                                src="{{ user.profile_picture }}"
+                                alt="{{ user.username }}"
+                            >
+
+                        {% else %}
+
+                            <div class="social-user-avatar-placeholder">
+                                {{ user.username[0]|upper }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="social-user-info flex-grow-1">
+
+                        <h3>
+
+                            <a
+                                href="{{ url_for(
+                                    'home.user_profile',
+                                    user_id=user.id
+                                ) }}"
+                            >
+                                @{{ user.username }}
+                            </a>
+
+                        </h3>
+
+                        <p class="text-muted mb-2">
+                            {{ user.first_name }}
+                            {{ user.last_name }}
+                        </p>
+
+
+                        {% if user.id != session["user_id"] %}
+
+    {% if follow_statuses[user.id] %}
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'follow.unfollow_user_html',
+                user_id=user.id
+            ) }}"
+        >
+
+            <button
+                type="submit"
+                class="btn btn-sm btn-outline-dark"
+            >
+                Following
+            </button>
+
+        </form>
+
+    {% else %}
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'follow.follow_user',
+                user_id=user.id
+            ) }}"
+        >
+
+            <button
+                type="submit"
+                class="btn btn-sm btn-dark"
+            >
+                Follow
+            </button>
+
+        </form>
+
+    {% endif %}
+
+{% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <div class="col-12">
+
+                <div class="empty-state shadow-soft">
+
+                    <h4>
+                        Not following anyone yet
+                    </h4>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,863 @@
+/* =========================================
+   GLOBAL
+========================================= */
+
+body {
+    background-color: #f5f6f8;
+    color: #212529;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+main {
+    min-height: calc(100vh - 64px);
+}
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+
+/* =========================================
+   NAVBAR
+========================================= */
+
+.navbar {
+    min-height: 64px;
+}
+
+.navbar-brand {
+    letter-spacing: 0.3px;
+}
+
+.nav-link {
+    transition: opacity 0.2s ease;
+}
+
+.nav-link:hover {
+    opacity: 0.75;
+}
+
+
+/* =========================================
+   PAGE LAYOUT
+========================================= */
+
+.page-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.narrow-container {
+    max-width: 650px;
+}
+
+.page-header {
+    margin-bottom: 28px;
+}
+
+.page-header h1 {
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.page-header p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 18px;
+    color: #6c757d;
+}
+
+.back-link:hover {
+    color: #212529;
+}
+
+
+/* =========================================
+   CARDS
+========================================= */
+
+.card {
+    border: none;
+    border-radius: 12px;
+}
+
+.shadow-soft {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+
+/* =========================================
+   FORMS
+========================================= */
+
+.form-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 30px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+}
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-control,
+textarea,
+select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="file"] {
+    width: 100%;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #ffffff;
+    font-family: inherit;
+}
+
+textarea {
+    resize: vertical;
+}
+
+textarea:focus,
+select:focus,
+input:focus {
+    outline: none;
+    border-color: #adb5bd;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+}
+
+.form-help {
+    display: block;
+    margin-top: 7px;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.optional-label {
+    color: #6c757d;
+    font-size: 0.85rem;
+    font-weight: 400;
+}
+
+.file-input {
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 28px;
+}
+
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    padding-left: 18px;
+    padding-right: 18px;
+}
+
+.btn-secondary {
+    padding-left: 18px;
+    padding-right: 18px;
+}
+
+
+/* =========================================
+   AUTH
+========================================= */
+
+.auth-container {
+    max-width: 430px;
+    margin: 60px auto;
+}
+
+.auth-card {
+    padding: 32px;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.07);
+}
+
+.auth-card h1 {
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+
+/* =========================================
+   USER CARDS
+========================================= */
+
+.user-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 15px 18px;
+    margin-bottom: 10px;
+    transition:
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.user-card:hover {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+}
+
+
+/* =========================================
+   POST CARDS
+========================================= */
+
+.post-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+}
+
+.post-card:hover {
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.07);
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.post-author {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.post-content {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    margin-bottom: 12px;
+}
+
+.post-meta {
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.post-image-container {
+    margin-top: 15px;
+}
+
+.post-image {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.post-detail-card {
+    max-width: 750px;
+    margin: 0 auto;
+}
+
+.post-detail-image {
+    max-height: 600px;
+}
+
+.post-visibility {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-top: 15px;
+}
+
+.post-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+
+.like-count {
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+
+/* =========================================
+   COMMENTS
+========================================= */
+
+.comments-section {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #e9ecef;
+}
+
+.comments-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: 18px;
+}
+
+.comment-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+}
+
+.comment-card p {
+    margin: 5px 0 0;
+}
+
+.comment-form {
+    margin-top: 20px;
+}
+
+.comment-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.comment-input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.comment-input-row input {
+    flex: 1;
+}
+
+
+/* =========================================
+   EMPTY STATES
+========================================= */
+
+.empty-state {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    color: #6c757d;
+}
+
+
+/* =========================================
+   EDIT / IMAGE PREVIEW
+========================================= */
+
+.current-image {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.edit-preview-image {
+    max-width: 100%;
+    max-height: 350px;
+    object-fit: cover;
+}
+
+
+/* =========================================
+   PROFILE
+========================================= */
+
+.profile-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 30px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+/* ================================
+   PROFILE PAGE
+================================ */
+
+.profile-page {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.profile-card {
+    margin-bottom: 25px;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.profile-avatar-wrapper {
+    flex-shrink: 0;
+}
+
+.profile-avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-avatar-placeholder {
+    background: #212529;
+    color: white;
+    font-size: 3rem;
+    font-weight: 600;
+}
+
+.profile-info {
+    flex: 1;
+}
+
+.profile-username {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.profile-name {
+    margin-bottom: 8px;
+    color: #6c757d;
+}
+
+.profile-bio {
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+
+/* ================================
+   PROFILE STATS
+================================ */
+
+.profile-stats {
+    display: flex;
+    border-top: 1px solid #e9ecef;
+    border-bottom: 1px solid #e9ecef;
+    margin-top: 25px;
+    padding: 18px 0;
+}
+
+.profile-stat {
+    flex: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.profile-stat strong {
+    font-size: 1.2rem;
+}
+
+.profile-stat span {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+
+/* ================================
+   PROFILE ACTIONS
+================================ */
+
+.profile-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.profile-actions form {
+    margin: 0;
+}
+
+
+/* ================================
+   SECTION HEADERS
+================================ */
+
+.section-header {
+    margin-bottom: 15px;
+}
+
+.section-header h2 {
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.section-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+
+/* ================================
+   POST FOOTER
+================================ */
+
+.post-footer {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+
+/* ================================
+   MOBILE PROFILE
+================================ */
+
+@media (max-width: 576px) {
+
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-avatar {
+        width: 110px;
+        height: 110px;
+    }
+
+    .profile-actions {
+        justify-content: center;
+    }
+
+}
+
+
+/* =========================================
+   DASHBOARDS
+========================================= */
+
+.dashboard-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 576px) {
+
+    .page-container {
+        width: 100%;
+    }
+
+    .form-card {
+        padding: 20px;
+    }
+
+    .auth-container {
+        margin: 30px auto;
+    }
+
+    .post-card {
+        padding: 16px;
+    }
+
+    .profile-card {
+        padding: 20px;
+    }
+
+    .comment-input-row {
+        flex-direction: column;
+    }
+
+    .comment-input-row .btn {
+        width: 100%;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+}
+
+/* ================================
+   PEOPLE / USERS
+================================ */
+
+.social-page {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.social-user-card {
+    padding: 24px;
+    border-radius: 14px;
+    background: white;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.social-user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.social-user-avatar {
+    flex-shrink: 0;
+}
+
+.social-user-avatar img,
+.social-user-avatar-placeholder {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+}
+
+.social-user-avatar img {
+    object-fit: cover;
+}
+
+.social-user-avatar-placeholder {
+    background: #212529;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.social-user-info {
+    min-width: 0;
+}
+
+.social-user-info h3 {
+    font-size: 1.05rem;
+    margin-bottom: 3px;
+}
+
+.social-user-info h3 a {
+    color: #212529;
+}
+
+.social-user-bio {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 0;
+}
+/* ================================
+   NOTIFICATIONS
+================================ */
+
+.notification-list {
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.notification-card {
+    background: white;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 14px;
+    border: 1px solid #edf0f2;
+    transition: box-shadow 0.2s ease;
+}
+
+.notification-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.notification-unread {
+    border-left: 4px solid #212529;
+}
+
+.notification-avatar {
+    flex-shrink: 0;
+}
+
+.notification-avatar img,
+.notification-avatar-placeholder {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+}
+
+.notification-avatar img {
+    object-fit: cover;
+}
+
+.notification-avatar-placeholder {
+    background: #212529;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-meta {
+    margin-top: 5px;
+    color: #6c757d;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notification-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+/* ================================
+   BOOKMARKS
+================================ */
+
+.bookmark-list {
+    max-width: 850px;
+    margin: 0 auto;
+}
+/* ================================
+   DASHBOARD TABLES
+================================ */
+
+.dashboard-card .table {
+    margin-bottom: 0;
+}
+
+.dashboard-card .table th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6c757d;
+    white-space: nowrap;
+}
+
+.dashboard-card .table td {
+    vertical-align: middle;
+}
+
+.dashboard-card .badge {
+    font-weight: 500;
+}
+
+/* =========================================
+   FINAL MOBILE POLISH
+========================================= */
+
+@media (max-width: 768px) {
+
+    main {
+        padding-left: 14px;
+        padding-right: 14px;
+    }
+
+    .page-header h1 {
+        font-size: 1.6rem;
+    }
+
+    .post-card {
+        border-radius: 12px;
+        padding: 18px;
+    }
+
+    .post-content {
+        font-size: 1rem;
+    }
+
+    .post-image {
+        max-height: 400px;
+    }
+
+    .post-actions {
+        gap: 6px;
+    }
+
+    .post-actions .btn {
+        flex: 1;
+    }
+
+    .profile-card {
+        padding: 20px;
+    }
+
+    .social-user-card {
+        padding: 18px;
+    }
+
+    .notification-card {
+        padding: 15px;
+    }
+
+    .dashboard-card {
+        padding: 18px;
+        overflow: hidden;
+    }
+
+    .dashboard-card .table {
+        font-size: 0.9rem;
+    }
+
+}
+/* ================================
+   USER SEARCH
+================================ */
+
+.search-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 25px;
+}

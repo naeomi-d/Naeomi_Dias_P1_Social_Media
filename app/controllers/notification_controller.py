@@ -10,8 +10,6 @@ notification_bp = Blueprint(
 )
 
 
-# ==================== HTML ROUTES ====================
-
 @notification_bp.route("/", methods=["GET"])
 def notifications():
 

@@ -1,0 +1,910 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="page-header mb-4">
+
+    <h1>Admin Dashboard</h1>
+
+    <p class="text-muted mb-0">
+        Manage platform users, review reports, and monitor administrative activity.
+    </p>
+
+</div>
+
+
+<div class="row g-3 mb-4">
+
+    <div class="col-md-3">
+
+        <div class="dashboard-card h-100">
+
+            <small class="text-muted">
+                Total Users
+            </small>
+
+            <h2 class="mt-2 mb-0">
+                {{ total_users }}
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <div class="dashboard-card h-100">
+
+            <small class="text-muted">
+                Active Users
+            </small>
+
+            <h2 class="mt-2 mb-0">
+                {{ active_users }}
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <div class="dashboard-card h-100">
+
+            <small class="text-muted">
+                Moderators
+            </small>
+
+            <h2 class="mt-2 mb-0">
+                {{ moderator_count }}
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <div class="dashboard-card h-100">
+
+            <small class="text-muted">
+                Pending Reports
+            </small>
+
+            <h2 class="mt-2 mb-0">
+                {{ pending_reports|length }}
+            </h2>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="alert alert-info mb-4">
+
+    <strong>Administrator controls:</strong>
+
+    <span>
+        Manage user account status, assign moderator privileges,
+        review reports, and monitor the administrative audit trail.
+    </span>
+
+</div>
+
+
+<div class="dashboard-card mb-4">
+
+    <div class="mb-3">
+
+        <h2 class="h4 mb-1">
+            User Management
+        </h2>
+
+        <p class="text-muted mb-0">
+            Manage platform accounts and application roles.
+        </p>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead class="table-light">
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Registered</th>
+                    <th class="text-end">Actions</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for user in users.items %}
+
+                <tr>
+
+                    <td class="text-muted">
+                        #{{ user.id }}
+                    </td>
+
+
+                    <td>
+
+                        <a
+                            href="{{ url_for(
+                                'home.user_profile',
+                                user_id=user.id
+                            ) }}"
+                            class="fw-semibold text-decoration-none"
+                        >
+                            @{{ user.username }}
+                        </a>
+
+                        <div>
+
+                            <small class="text-muted">
+                                {{ user.first_name }} {{ user.last_name }}
+                            </small>
+
+                        </div>
+
+                    </td>
+
+
+                    <td>
+                        {{ user.email }}
+                    </td>
+
+                    <td>
+
+                        {% if user.role == "ADMIN" %}
+
+                            <span class="badge text-bg-danger">
+                                ADMIN
+                            </span>
+
+                        {% elif user.role == "MODERATOR" %}
+
+                            <span class="badge text-bg-warning">
+                                MODERATOR
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge text-bg-secondary">
+                                USER
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+
+                    <td>
+
+                        {% if user.is_active %}
+
+                            <span class="badge text-bg-success">
+                                Active
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge text-bg-secondary">
+                                Inactive
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        <small class="text-muted">
+                            {{ user.created_at | ist_datetime }}
+                        </small>
+
+                    </td>
+
+
+                    <td class="text-end">
+
+                        {% if user.id == session.get("user_id") %}
+
+                            <span class="badge text-bg-dark">
+                                Current Admin
+                            </span>
+
+                        {% elif user.role == "ADMIN" %}
+
+                            <span class="text-muted">
+                                Protected
+                            </span>
+
+                        {% else %}
+
+                            <div
+                                class="d-flex flex-column gap-2 align-items-end"
+                                style="min-width: 170px;"
+                            >
+
+                                {% if user.is_active %}
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'admin.deactivate_user',
+                                            user_id=user.id
+                                        ) }}"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-outline-danger btn-sm w-100"
+                                        >
+                                            Deactivate User
+                                        </button>
+
+                                    </form>
+
+                                {% else %}
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'admin.activate_user',
+                                            user_id=user.id
+                                        ) }}"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-outline-success btn-sm w-100"
+                                        >
+                                            Activate User
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+
+                                {% if user.role == "USER" %}
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'admin.change_user_role',
+                                            user_id=user.id
+                                        ) }}"
+                                    >
+
+                                        <input
+                                            type="hidden"
+                                            name="role"
+                                            value="MODERATOR"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-outline-warning btn-sm w-100"
+                                        >
+                                            Promote to Moderator
+                                        </button>
+
+                                    </form>
+
+                                {% elif user.role == "MODERATOR" %}
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'admin.change_user_role',
+                                            user_id=user.id
+                                        ) }}"
+                                    >
+
+                                        <input
+                                            type="hidden"
+                                            name="role"
+                                            value="USER"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-outline-secondary btn-sm w-100"
+                                        >
+                                            Remove Moderator Role
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+                            </div>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="text-center text-muted py-4"
+                    >
+                        No users found.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    {% if users.pages > 1 %}
+
+    <nav
+        class="mt-3"
+        aria-label="User pagination"
+    >
+
+        <ul class="pagination justify-content-center">
+
+            <li class="page-item {% if not users.has_prev %}disabled{% endif %}">
+
+                {% if users.has_prev %}
+
+                <a
+                    class="page-link"
+                    href="{{ url_for(
+                        'admin.dashboard',
+                        users_page=users.prev_num,
+                        audit_page=audit_page
+                    ) }}"
+                >
+                    Previous
+                </a>
+
+                {% else %}
+
+                <span class="page-link">
+                    Previous
+                </span>
+
+                {% endif %}
+
+            </li>
+
+
+            {% for page_num in users.iter_pages(
+                left_edge=1,
+                right_edge=1,
+                left_current=2,
+                right_current=2
+            ) %}
+
+                {% if page_num %}
+
+                <li
+                    class="page-item
+                    {% if page_num == users.page %}active{% endif %}"
+                >
+
+                    <a
+                        class="page-link"
+                        href="{{ url_for(
+                            'admin.dashboard',
+                            users_page=page_num,
+                            audit_page=audit_page
+                        ) }}"
+                    >
+                        {{ page_num }}
+                    </a>
+
+                </li>
+
+                {% else %}
+
+                <li class="page-item disabled">
+
+                    <span class="page-link">
+                        …
+                    </span>
+
+                </li>
+
+                {% endif %}
+
+            {% endfor %}
+
+
+            <li class="page-item {% if not users.has_next %}disabled{% endif %}">
+
+                {% if users.has_next %}
+
+                <a
+                    class="page-link"
+                    href="{{ url_for(
+                        'admin.dashboard',
+                        users_page=users.next_num,
+                        audit_page=audit_page
+                    ) }}"
+                >
+                    Next
+                </a>
+
+                {% else %}
+
+                <span class="page-link">
+                    Next
+                </span>
+
+                {% endif %}
+
+            </li>
+
+        </ul>
+
+    </nav>
+
+    {% endif %}
+
+</div>
+
+<div class="dashboard-card mb-4">
+
+    <div class="mb-3">
+
+        <h2 class="h4 mb-1">
+            Pending Reports
+        </h2>
+
+        <p class="text-muted mb-0">
+            Reports requiring administrative attention.
+        </p>
+
+    </div>
+
+
+    {% if pending_reports %}
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead class="table-light">
+
+                <tr>
+
+                    <th>Report</th>
+                    <th>Reporter</th>
+                    <th>Target</th>
+                    <th>Reason</th>
+                    <th>Submitted</th>
+                    <th class="text-end">Decision</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for report in pending_reports %}
+
+                <tr>
+
+                    <td>
+                        <span class="badge text-bg-dark">
+                            #{{ report.id }}
+                        </span>
+                    </td>
+
+
+                    <td>
+
+                        {% if report.reporter %}
+
+                            @{{ report.reporter.username }}
+
+                        {% else %}
+
+                            Unknown
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if report.post_id %}
+
+                            <span class="badge text-bg-primary">
+                                Post #{{ report.post_id }}
+                            </span>
+
+                        {% elif report.reported_user_id %}
+
+                            <span class="badge text-bg-secondary">
+
+                                {% if report.reported_user %}
+                                    @{{ report.reported_user.username }}
+                                {% else %}
+                                    User #{{ report.reported_user_id }}
+                                {% endif %}
+
+                            </span>
+
+                        {% else %}
+
+                            Unknown
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+                        {{ report.reason }}
+                    </td>
+
+
+                    <td>
+
+                        <small class="text-muted">
+                            {{ report.created_at | ist_datetime }}
+                        </small>
+
+                    </td>
+
+
+                    <td>
+
+                        <div class="d-flex gap-2 justify-content-end">
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'admin.review_report',
+                                    report_id=report.id
+                                ) }}"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="status"
+                                    value="REVIEWED"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-success btn-sm"
+                                >
+                                    Review
+                                </button>
+
+                            </form>
+
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'admin.review_report',
+                                    report_id=report.id
+                                ) }}"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="status"
+                                    value="REJECTED"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-outline-secondary btn-sm"
+                                >
+                                    Reject
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state text-center py-4">
+
+        <h3 class="h5">
+            No pending reports
+        </h3>
+
+        <p class="text-muted mb-0">
+            There are currently no reports requiring administrative review.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+<div class="dashboard-card">
+
+    <div class="mb-3">
+
+        <h2 class="h4 mb-1">
+            Administrative Activity
+        </h2>
+
+        <p class="text-muted mb-0">
+            Audit trail of important administrator and moderator actions.
+        </p>
+
+    </div>
+
+
+    {% if audit_logs.items %}
+
+    <div class="table-responsive">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead class="table-light">
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Actor</th>
+                    <th>Action</th>
+                    <th>Entity</th>
+                    <th>Details</th>
+                    <th>Date</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for log in audit_logs.items %}
+
+                <tr>
+
+                    <td class="text-muted">
+                        #{{ log.id }}
+                    </td>
+
+
+                    <td>
+                        Admin #{{ log.admin_id }}
+                    </td>
+
+
+                    <td>
+
+                        <span class="badge text-bg-dark">
+                            {{ log.action }}
+                        </span>
+
+                    </td>
+
+
+                    <td>
+
+                        {{ log.entity_type }}
+                        #{{ log.entity_id }}
+
+                    </td>
+
+
+                    <td>
+
+                        {% if log.details %}
+
+                            <span class="text-muted">
+                                {{ log.details }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="text-muted">
+                                N/A
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        <small class="text-muted">
+                            {{ log.created_at | ist_datetime }}
+                        </small>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+    {% if audit_logs.pages > 1 %}
+
+    <nav
+        class="mt-3"
+        aria-label="Audit pagination"
+    >
+
+        <ul class="pagination justify-content-center">
+
+            <li class="page-item {% if not audit_logs.has_prev %}disabled{% endif %}">
+
+                {% if audit_logs.has_prev %}
+
+                <a
+                    class="page-link"
+                    href="{{ url_for(
+                        'admin.dashboard',
+                        users_page=users_page,
+                        audit_page=audit_logs.prev_num
+                    ) }}"
+                >
+                    Previous
+                </a>
+
+                {% else %}
+
+                <span class="page-link">
+                    Previous
+                </span>
+
+                {% endif %}
+
+            </li>
+
+
+            {% for page_num in audit_logs.iter_pages(
+                left_edge=1,
+                right_edge=1,
+                left_current=2,
+                right_current=2
+            ) %}
+
+                {% if page_num %}
+
+                <li
+                    class="page-item
+                    {% if page_num == audit_logs.page %}active{% endif %}"
+                >
+
+                    <a
+                        class="page-link"
+                        href="{{ url_for(
+                            'admin.dashboard',
+                            users_page=users_page,
+                            audit_page=page_num
+                        ) }}"
+                    >
+                        {{ page_num }}
+                    </a>
+
+                </li>
+
+                {% else %}
+
+                <li class="page-item disabled">
+
+                    <span class="page-link">
+                        …
+                    </span>
+
+                </li>
+
+                {% endif %}
+
+            {% endfor %}
+
+
+            <li class="page-item {% if not audit_logs.has_next %}disabled{% endif %}">
+
+                {% if audit_logs.has_next %}
+
+                <a
+                    class="page-link"
+                    href="{{ url_for(
+                        'admin.dashboard',
+                        users_page=users_page,
+                        audit_page=audit_logs.next_num
+                    ) }}"
+                >
+                    Next
+                </a>
+
+                {% else %}
+
+                <span class="page-link">
+                    Next
+                </span>
+
+                {% endif %}
+
+            </li>
+
+        </ul>
+
+    </nav>
+
+    {% endif %}
+
+    {% else %}
+
+    <div class="empty-state text-center py-4">
+
+        <h3 class="h5">
+            No administrative activity
+        </h3>
+
+        <p class="text-muted mb-0">
+            Administrative actions will appear here.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

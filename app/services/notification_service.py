@@ -2,6 +2,9 @@ from app.models.notification import Notification
 
 from app.dao.notification_dao import NotificationDAO
 
+from app.exceptions.resource_exceptions import ResourceNotFoundError
+from app.exceptions.validation_exceptions import ValidationError
+from app.exceptions.authorization_exceptions import AuthorizationError
 
 class NotificationService:
 
@@ -23,7 +26,7 @@ class NotificationService:
     ):
 
         if notification_type not in NotificationService.VALID_TYPES:
-            raise ValueError(
+            raise ValidationError(
                 "Invalid notification type."
             )
 
@@ -69,12 +72,12 @@ class NotificationService:
         )
 
         if not notification:
-            raise ValueError(
+            raise ResourceNotFoundError(
                 "Notification not found."
             )
 
         if notification.recipient_id != recipient_id:
-            raise PermissionError(
+            raise AuthorizationError(
                 "You cannot modify this notification."
             )
 
@@ -102,12 +105,12 @@ class NotificationService:
         )
 
         if not notification:
-            raise ValueError(
+            raise ResourceNotFoundError(
                 "Notification not found."
             )
 
         if notification.recipient_id != recipient_id:
-            raise PermissionError(
+            raise AuthorizationError(
                 "You cannot delete this notification."
             )
 

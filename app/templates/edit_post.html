@@ -6,58 +6,161 @@ Edit Post
 
 {% block content %}
 
-<h1>Edit Post</h1>
+<div class="page-container narrow-container">
 
-<form method="POST">
+    <div class="page-header">
 
-    <div>
-        <label for="content">Content</label>
+        <h1>Edit Post</h1>
 
-        <textarea
-            id="content"
-            name="content"
-            rows="5"
-            required
-        >{{ post.content }}</textarea>
+        <p>
+            Update your post and keep your content fresh.
+        </p>
+
     </div>
 
-    <br>
 
-    <div>
-        <label for="visibility">Visibility</label>
+    <div class="form-card">
 
-        <select id="visibility" name="visibility">
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+        >
 
-            <option
-                value="PUBLIC"
-                {% if post.visibility == "PUBLIC" %}selected{% endif %}
-            >
-                Public
-            </option>
+            <div class="form-group">
 
-            <option
-                value="FOLLOWERS"
-                {% if post.visibility == "FOLLOWERS" %}selected{% endif %}
-            >
-                Followers
-            </option>
+                <label for="content">
+                    Post Content
+                </label>
 
-            <option
-                value="PRIVATE"
-                {% if post.visibility == "PRIVATE" %}selected{% endif %}
-            >
-                Private
-            </option>
+                <textarea
+                    id="content"
+                    name="content"
+                    rows="7"
+                    required
+                >{{ post.content }}</textarea>
 
-        </select>
+            </div>
+
+
+
+            {% if post.image_path %}
+
+                <div class="form-group">
+
+                    <label>
+                        Current Image
+                    </label>
+
+                    <div class="current-image">
+
+                        <img
+                            src="{{ post.image_path }}"
+                            alt="Current Post Image"
+                            class="post-image edit-preview-image"
+                        >
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="form-group">
+
+                <label for="image">
+
+                    Replace Post Image
+
+                    <span class="optional-label">
+                        Optional
+                    </span>
+
+                </label>
+
+                <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    accept="image/jpeg,image/png,image/gif"
+                    class="file-input"
+                >
+
+                <small class="form-help">
+                    Upload a new image only if you want to replace the
+                    current one. Maximum size: 5 MB.
+                </small>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="visibility">
+                    Visibility
+                </label>
+
+                <select
+                    id="visibility"
+                    name="visibility"
+                >
+
+                    <option
+                        value="PUBLIC"
+                        {% if post.visibility == "PUBLIC" %}
+                            selected
+                        {% endif %}
+                    >
+                        Public — Everyone can see this
+                    </option>
+
+                    <option
+                        value="FOLLOWERS"
+                        {% if post.visibility == "FOLLOWERS" %}
+                            selected
+                        {% endif %}
+                    >
+                        Followers — Only your followers
+                    </option>
+
+                    <option
+                        value="PRIVATE"
+                        {% if post.visibility == "PRIVATE" %}
+                            selected
+                        {% endif %}
+                    >
+                        Private — Only you
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-actions">
+
+                <a
+                    href="{{ url_for(
+                        'post.post_detail',
+                        post_id=post.id
+                    ) }}"
+                    class="btn btn-secondary"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
     </div>
 
-    <br>
-
-    <button type="submit">
-        Update Post
-    </button>
-
-</form>
+</div>
 
 {% endblock %}

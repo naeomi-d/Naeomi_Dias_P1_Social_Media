@@ -6,39 +6,147 @@ Register
 
 {% block content %}
 
-<h1>Registration Page</h1>
+<div class="auth-container">
 
-<form method="POST">
+    <div class="auth-card">
 
-    <label>Username</label>
-    <input type="text" name="username">
+        <h1 class="text-center">
+            Create Account
+        </h1>
 
-    <br><br>
+        <p class="text-center text-muted mb-4">
+            Join Postly and start sharing your thoughts with the world.
+        </p>
 
-    <label>Email</label>
-    <input type="email" name="email">
 
-    <br><br>
+        <form method="POST">
 
-    <label>First Name</label>
-    <input type="text" name="first_name">
+            <div class="mb-3">
 
-    <br><br>
+                <label
+                    for="username"
+                    class="form-label"
+                >
+                    Username
+                </label>
 
-    <label>Last Name</label>
-    <input type="text" name="last_name">
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    class="form-control"
+                    placeholder="Choose a username"
+                >
 
-    <br><br>
+            </div>
 
-    <label>Password</label>
-    <input type="password" name="password">
 
-    <br><br>
+            <div class="mb-3">
 
-    <button type="submit">
-        Register
-    </button>
+                <label
+                    for="email"
+                    class="form-label"
+                >
+                    Email
+                </label>
 
-</form>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-control"
+                    placeholder="you@example.com"
+                >
+
+            </div>
+
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="first_name"
+                        class="form-label"
+                    >
+                        First Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="first_name"
+                        name="first_name"
+                        class="form-control"
+                        placeholder="First name"
+                    >
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <label
+                        for="last_name"
+                        class="form-label"
+                    >
+                        Last Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="last_name"
+                        name="last_name"
+                        class="form-control"
+                        placeholder="Last name"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="mb-4">
+
+                <label
+                    for="password"
+                    class="form-label"
+                >
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-control"
+                    placeholder="Create a password"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-dark w-100"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+
+        <p class="text-center text-muted mt-4 mb-0">
+
+            Already have an account?
+
+            <a href="{{ url_for('auth.login') }}">
+                Login
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
 
 {% endblock %}

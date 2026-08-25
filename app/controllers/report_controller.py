@@ -4,7 +4,8 @@ from flask import (
     url_for,
     flash,
     session,
-    request
+    request,
+    render_template
 )
 
 from app.services.report_service import ReportService
@@ -84,4 +85,19 @@ def report_user(user_id):
 
     return redirect(
         url_for("home.home")
+    )
+@report_bp.route(
+    "/reports/my",
+    methods=["GET"]
+)
+@login_required
+def my_reports():
+
+    reports = ReportService.get_my_reports(
+        session["user_id"]
+    )
+
+    return render_template(
+        "my_reports.html",
+        reports=reports
     )

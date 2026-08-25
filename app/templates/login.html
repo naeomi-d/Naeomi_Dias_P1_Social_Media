@@ -6,24 +6,83 @@ Login
 
 {% block content %}
 
-<h1>Login</h1>
+<div class="auth-container">
 
-<form method="POST">
+    <div class="auth-card">
 
-    <label>Username</label>
-    <input type="text" name="username" required>
+        <h1 class="text-center">
+            Welcome Back
+        </h1>
 
-    <br><br>
+        <p class="text-center text-muted mb-4">
+            Login to your Postly account
+        </p>
 
-    <label>Password</label>
-    <input type="password" name="password" required>
+        <form method="POST">
 
-    <br><br>
+            <div class="mb-3">
 
-    <button type="submit">
-        Login
-    </button>
+                <label
+                    for="username"
+                    class="form-label"
+                >
+                    Username
+                </label>
 
-</form>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    class="form-control"
+                    placeholder="Enter your username"
+                    required
+                >
+
+            </div>
+
+
+            <div class="mb-4">
+
+                <label
+                    for="password"
+                    class="form-label"
+                >
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-control"
+                    placeholder="Enter your password"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-dark w-100"
+            >
+                Login
+            </button>
+
+        </form>
+
+        <p class="text-center text-muted mt-4 mb-0">
+
+            Don't have an account?
+
+            <a href="{{ url_for('auth.register') }}">
+                Register
+            </a>
+
+        </p>
+
+    </div>
+
+</div>
 
 {% endblock %}

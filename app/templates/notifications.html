@@ -1,161 +1,196 @@
 {% extends "base.html" %}
 
 {% block title %}
-Notifications
+Notifications · Postly
 {% endblock %}
 
 {% block content %}
 
-<h1>Notifications</h1>
+<div class="social-page">
 
-<a href="{{ url_for('home.home') }}">
-    Back to Home
-</a>
+    <div class="page-header d-flex justify-content-between align-items-center">
 
-<br><br>
+        <div>
 
+            <h1>Notifications</h1>
 
-<!-- ==================== MARK ALL AS READ ==================== -->
-
-<form
-    method="POST"
-    action="{{ url_for('notification.mark_all_as_read_html') }}"
->
-
-    <button type="submit">
-        Mark All as Read
-    </button>
-
-</form>
-
-<hr>
-
-
-<!-- ==================== NOTIFICATIONS ==================== -->
-
-{% for notification in notifications %}
-
-    <div>
-
-        {% if notification.type == "LIKE" %}
-
-            <p>
-                <strong>
-                    {{ notification.actor.username }}
-                </strong>
-                liked your post.
+            <p class="text-muted mb-0">
+                Stay updated with your activity.
             </p>
 
-        {% elif notification.type == "COMMENT" %}
+        </div>
 
-            <p>
-                <strong>
-                    {{ notification.actor.username }}
-                </strong>
-                commented on your post.
-            </p>
-
-        {% elif notification.type == "FOLLOW" %}
-
-            <p>
-                <strong>
-                    {{ notification.actor.username }}
-                </strong>
-                started following you.
-            </p>
-
-        {% elif notification.type == "MENTION" %}
-
-            <p>
-                <strong>
-                    {{ notification.actor.username }}
-                </strong>
-                mentioned you.
-            </p>
-
-        {% else %}
-
-            <p>
-                <strong>
-                    {{ notification.actor.username }}
-                </strong>
-                performed an action.
-            </p>
-
-        {% endif %}
-
-
-        <!-- ==================== STATUS ==================== -->
-
-        {% if notification.is_read %}
-
-            <small>
-                Read
-            </small>
-
-        {% else %}
-
-            <strong>
-                Unread
-            </strong>
-
-        {% endif %}
-
-
-        <small>
-            {{ notification.created_at }}
-        </small>
-
-
-        <!-- ==================== MARK AS READ ==================== -->
-
-        {% if not notification.is_read %}
-
-            <form
-                method="POST"
-                action="{{ url_for(
-                    'notification.mark_notification_as_read_html',
-                    notification_id=notification.id
-                ) }}"
-                style="display:inline;"
-            >
-
-                <button type="submit">
-                    Mark as Read
-                </button>
-
-            </form>
-
-        {% endif %}
-
-
-        <!-- ==================== DELETE ==================== -->
 
         <form
             method="POST"
             action="{{ url_for(
-                'notification.delete_notification_html',
-                notification_id=notification.id
+                'notification.mark_all_as_read_html'
             ) }}"
-            style="display:inline;"
         >
 
-            <button type="submit">
-                Delete
+            <button
+                type="submit"
+                class="btn btn-outline-dark btn-sm"
+            >
+                Mark All as Read
             </button>
 
         </form>
 
     </div>
 
-    <hr>
+    <div class="notification-list">
 
-{% else %}
+        {% for notification in notifications %}
 
-    <p>
-        No notifications yet.
-    </p>
+            <div
+                class="notification-card
+                {% if not notification.is_read %}
+                    notification-unread
+                {% endif %}"
+            >
 
-{% endfor %}
+                <div class="notification-avatar">
+
+                    {% if notification.actor.profile_picture %}
+
+                        <img
+                            src="{{ notification.actor.profile_picture }}"
+                            alt="{{ notification.actor.username }}"
+                        >
+
+                    {% else %}
+
+                        <div class="notification-avatar-placeholder">
+
+                            {{ notification.actor.username[0]|upper }}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="notification-content">
+
+                    <div>
+
+                        <strong>
+                            {{ notification.actor.username }}
+                        </strong>
+
+                        {% if notification.type == "LIKE" %}
+
+                            liked your post.
+
+                        {% elif notification.type == "COMMENT" %}
+
+                            commented on your post.
+
+                        {% elif notification.type == "FOLLOW" %}
+
+                            started following you.
+
+                        {% elif notification.type == "MENTION" %}
+
+                            mentioned you.
+
+                        {% else %}
+
+                            performed an action.
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="notification-meta">
+
+                        {{ notification.created_at }}
+
+                        {% if notification.is_read %}
+
+                            <span class="badge bg-light text-secondary">
+                                Read
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-dark">
+                                New
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="notification-actions">
+
+                        {% if not notification.is_read %}
+
+                            <form
+                                method="POST"
+                                action="{{ url_for(
+                                    'notification.mark_notification_as_read_html',
+                                    notification_id=notification.id
+                                ) }}"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-sm btn-outline-secondary"
+                                >
+                                    Mark as Read
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+
+                        <form
+                            method="POST"
+                            action="{{ url_for(
+                                'notification.delete_notification_html',
+                                notification_id=notification.id
+                            ) }}"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn btn-sm btn-outline-danger"
+                            >
+                                Delete
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-state shadow-soft">
+
+                <h4>
+                    You're all caught up
+                </h4>
+
+                <p class="text-muted mb-0">
+                    No notifications yet.
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
 
 {% endblock %}

@@ -1,53 +1,119 @@
 {% extends "base.html" %}
 
 {% block title %}
-My Bookmarks
+Saved Posts · Postly
 {% endblock %}
 
 {% block content %}
 
-<h1>My Bookmarks</h1>
+<div class="social-page">
 
-{% for bookmark in bookmarks %}
+    <div class="page-header">
 
-    <article>
+        <h1>Saved Posts</h1>
 
-        <h3>
-            {{ bookmark.post.user.username }}
-        </h3>
-
-        <p>
-            {{ bookmark.post.content }}
+        <p class="text-muted">
+            Posts you've bookmarked for later.
         </p>
 
-        <small>
-            {{ bookmark.post.created_at }}
-        </small>
+    </div>
 
-        <br><br>
 
-        <form
-            method="POST"
-            action="{{ url_for(
-                'bookmark.remove_bookmark',
-                post_id=bookmark.post.id
-            ) }}"
-        >
+    <div class="bookmark-list">
 
-            <button type="submit">
-                Remove Bookmark
-            </button>
+        {% for bookmark in bookmarks %}
 
-        </form>
+            <article class="post-card shadow-soft">
 
-    </article>
+                <div class="post-header">
 
-    <hr>
+                    <a
+                        href="{{ url_for(
+                            'home.user_profile',
+                            user_id=bookmark.post.user.id
+                        ) }}"
+                        class="post-author"
+                    >
+                        @{{ bookmark.post.user.username }}
+                    </a>
 
-{% else %}
+                </div>
 
-    <p>No bookmarked posts yet.</p>
+                <div class="post-content">
 
-{% endfor %}
+                    {{ bookmark.post.content }}
+
+                </div>
+
+
+                {% if bookmark.post.image_path %}
+
+                    <img
+                        src="{{ bookmark.post.image_path }}"
+                        alt="Post Image"
+                        class="post-image"
+                    >
+
+                {% endif %}
+
+                <div class="post-meta">
+
+                    {{ bookmark.post.created_at }}
+
+                </div>
+
+                <div class="post-footer">
+
+                    <a
+                        href="{{ url_for(
+                            'post.post_detail',
+                            post_id=bookmark.post.id
+                        ) }}"
+                        class="btn btn-sm btn-outline-secondary"
+                    >
+                        View Post
+                    </a>
+
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'bookmark.remove_bookmark',
+                            post_id=bookmark.post.id
+                        ) }}"
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn btn-sm btn-outline-danger"
+                        >
+                            Remove Bookmark
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </article>
+
+        {% else %}
+
+            <div class="empty-state shadow-soft">
+
+                <h4>
+                    No saved posts
+                </h4>
+
+                <p class="text-muted mb-0">
+                    Posts you bookmark will appear here.
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
 
 {% endblock %}

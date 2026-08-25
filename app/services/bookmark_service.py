@@ -2,6 +2,9 @@ from app.dao.bookmark_dao import BookmarkDAO
 from app.dao.post_dao import PostDAO
 from app.models.bookmark import Bookmark
 
+from app.exceptions.resource_exceptions import ResourceNotFoundError
+from app.exceptions.validation_exceptions import ValidationError
+from app.exceptions.authorization_exceptions import AuthorizationError
 
 class BookmarkService:
 
@@ -11,10 +14,10 @@ class BookmarkService:
         post = PostDAO.find_by_id(post_id)
 
         if not post:
-            raise ValueError("Post not found.")
+            raise ResourceNotFoundError("Post not found.")
 
         if post.status == "DELETED":
-            raise ValueError(
+            raise ValidationError(
                 "Cannot bookmark a deleted post."
             )
 
@@ -26,7 +29,7 @@ class BookmarkService:
         )
 
         if existing_bookmark:
-            raise ValueError(
+            raise ValidationError(
                 "Post is already bookmarked."
             )
 
@@ -46,7 +49,7 @@ class BookmarkService:
         )
 
         if not bookmark:
-            raise ValueError(
+            raise ValidationError(
                 "Post is not bookmarked."
             )
 
@@ -61,14 +64,14 @@ class BookmarkService:
     def get_bookmark(bookmark_id, user_id):
         bookmark = BookmarkDAO.find_by_id(bookmark_id)
         if not bookmark:
-            raise ValueError("Bookmark not found.")
+            raise ResourceNotFoundError("Bookmark not found.")
         if bookmark.user_id != user_id:
-            raise PermissionError("You cannot view another user's bookmark.")
+            raise AuthorizationError("You cannot view another user's bookmark.")
         return bookmark
 
     @staticmethod
     def get_bookmark_status(user_id, post_id):
         post = PostDAO.find_by_id(post_id)
         if not post or post.status == "DELETED":
-            raise ValueError("Post not found.")
+            raise ResourceNotFoundError("Post not found.")
         return BookmarkDAO.find_by_user_and_post(user_id, post_id)

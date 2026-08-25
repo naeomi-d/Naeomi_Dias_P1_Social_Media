@@ -1,23 +1,213 @@
 {% extends "base.html" %}
 
-{% block title %}Users{% endblock %}
+{% block title %}
+People · Postly
+{% endblock %}
 
 {% block content %}
-<h1>People</h1>
-<p><a href="{{ url_for('home.home') }}">Back to feed</a></p>
 
-{% for user in users %}
-    <article>
-        <h2>
-            <a href="{{ url_for('home.user_profile', user_id=user.id) }}">
-                {{ user.username }}
-            </a>
-        </h2>
-        <p>{{ user.first_name }} {{ user.last_name }}</p>
-        {% if user.bio %}<p>{{ user.bio }}</p>{% endif %}
-    </article>
-    <hr>
-{% else %}
-    <p>No users registered yet.</p>
-{% endfor %}
+<div class="social-page">
+
+    <div class="page-header">
+
+        <h1>People</h1>
+
+        <p class="text-muted">
+            Discover people and connect with your community.
+        </p>
+
+    </div>
+
+
+    <div class="search-card shadow-soft mb-4">
+
+        <form
+            method="GET"
+            action="{{ url_for('home.users') }}"
+            class="row g-2"
+        >
+
+            <div class="col">
+
+                <label
+                    for="userSearch"
+                    class="visually-hidden"
+                >
+                    Search people
+                </label>
+
+                <input
+                    type="search"
+                    id="userSearch"
+                    name="search"
+                    value="{{ search_term }}"
+                    class="form-control"
+                    placeholder="Search by username or name..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+
+            <div class="col-auto">
+
+                <button
+                    type="submit"
+                    class="btn btn-dark"
+                >
+                    Search
+                </button>
+
+            </div>
+
+
+            {% if search_term %}
+
+                <div class="col-auto">
+
+                    <a
+                        href="{{ url_for('home.users') }}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Clear
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </form>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        {% for user in users %}
+
+            <div class="col-md-6 col-lg-4">
+
+                <div class="user-card social-user-card shadow-soft h-100">
+
+
+                    <div class="social-user-avatar">
+
+                        {% if user.profile_picture %}
+
+                            <img
+                                src="{{ user.profile_picture }}"
+                                alt="{{ user.username }}'s profile picture"
+                            >
+
+                        {% else %}
+
+                            <div class="social-user-avatar-placeholder">
+                                {{ user.username[0]|upper }}
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="social-user-info">
+
+                        <h3>
+
+                            <a
+                                href="{{ url_for(
+                                    'home.user_profile',
+                                    user_id=user.id
+                                ) }}"
+                            >
+                                @{{ user.username }}
+                            </a>
+
+                        </h3>
+
+
+                        <p class="text-muted mb-2">
+
+                            {{ user.first_name }}
+                            {{ user.last_name }}
+
+                        </p>
+
+
+                        {% if user.bio %}
+
+                            <p class="social-user-bio">
+                                {{ user.bio }}
+                            </p>
+
+                        {% else %}
+
+                            <p class="social-user-bio text-muted">
+                                No bio yet.
+                            </p>
+
+                        {% endif %}
+
+
+                        <a
+                            href="{{ url_for(
+                                'home.user_profile',
+                                user_id=user.id
+                            ) }}"
+                            class="btn btn-outline-dark btn-sm mt-2"
+                        >
+                            View Profile
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <div class="col-12">
+
+                <div class="empty-state shadow-soft">
+
+                    {% if search_term %}
+
+                        <h4>
+                            No people found
+                        </h4>
+
+                        <p class="text-muted mb-3">
+                            No users matched "{{ search_term }}".
+                        </p>
+
+                        <a
+                            href="{{ url_for('home.users') }}"
+                            class="btn btn-outline-dark"
+                        >
+                            Clear Search
+                        </a>
+
+                    {% else %}
+
+                        <h4>
+                            No people yet
+                        </h4>
+
+                        <p class="text-muted mb-0">
+                            There are no registered users to discover.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
 {% endblock %}

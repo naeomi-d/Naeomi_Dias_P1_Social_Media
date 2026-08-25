@@ -29,13 +29,15 @@ def create_post():
 
         content = request.form.get("content")
         visibility = request.form.get("visibility")
+        image_file = request.files.get("image")
 
         try:
 
             PostService.create_post(
                 session["user_id"],
                 content,
-                visibility
+                visibility,
+                image_file=image_file
             )
 
             flash("Post created successfully.", "success")
@@ -72,14 +74,16 @@ def edit_post(post_id):
 
         content = request.form.get("content")
         visibility = request.form.get("visibility")
+        image_file = request.files.get("image")
 
         try:
 
             PostService.update_post(
                 post_id,
                 session["user_id"],
-                content,
-                visibility
+                content=content,
+                visibility=visibility,
+                image_file=image_file
             )
 
             flash("Post updated successfully.", "success")
@@ -94,6 +98,7 @@ def edit_post(post_id):
         "edit_post.html",
         post=post
     )
+
 
 @post_bp.route("/posts/<int:post_id>/delete", methods=["POST"])
 @login_required

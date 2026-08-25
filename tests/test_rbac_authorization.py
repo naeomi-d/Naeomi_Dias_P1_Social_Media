@@ -14,7 +14,7 @@ from app.services.report_service import ReportService
 @pytest.fixture
 def app():
     app = Flask(__name__)
-    app.config.update(TESTING=True, JWT_SECRET_KEY="test-secret")
+    app.config.update(TESTING=True, JWT_SECRET_KEY="super_secret_jwt_key_32_bytes_long_exact")
     jwt.init_app(app)
     app.register_blueprint(report_api_bp)
     return app

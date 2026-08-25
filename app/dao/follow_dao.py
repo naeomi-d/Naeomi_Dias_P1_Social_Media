@@ -29,16 +29,30 @@ class FollowDAO:
     @staticmethod
     def get_followers(user_id):
 
-        return Follow.query.filter_by(
-            following_id=user_id
-        ).all()
+        follows = (
+            Follow.query
+            .filter_by(following_id=user_id)
+            .all()
+        )
+
+        return [
+            follow.follower
+            for follow in follows
+        ]
 
     @staticmethod
     def get_following(user_id):
 
-        return Follow.query.filter_by(
-            follower_id=user_id
-        ).all()
+        follows = (
+            Follow.query
+            .filter_by(follower_id=user_id)
+            .all()
+        )
+
+        return [
+            follow.following
+            for follow in follows
+        ]
 
     @staticmethod
     def count_followers(user_id):

@@ -12,10 +12,30 @@ class AdminAuditLogDAO:
 
     @staticmethod
     def find_by_id(audit_log_id):
-        return AdminAuditLog.query.filter_by(id=audit_log_id).first()
+        return AdminAuditLog.query.filter_by(
+            id=audit_log_id
+        ).first()
 
     @staticmethod
     def find_all():
         return AdminAuditLog.query.order_by(
             AdminAuditLog.created_at.desc()
         ).all()
+
+    @staticmethod
+    def find_paginated(page=1, per_page=20):
+        return (
+            AdminAuditLog.query
+            .order_by(
+                AdminAuditLog.created_at.desc()
+            )
+            .paginate(
+                page=page,
+                per_page=per_page,
+                error_out=False
+            )
+        )
+
+    @staticmethod
+    def count_all():
+        return AdminAuditLog.query.count()

@@ -1,11 +1,14 @@
 import bcrypt
+
 from app.models.user import User
 from app.dao.user_dao import UserDAO
+
 
 class AuthService:
 
     @staticmethod
-    def register(username,email,password,first_name,last_name):
+    def register(username, email, password, first_name, last_name):
+
         existing_user = UserDAO.find_by_username(username)
 
         if existing_user:
@@ -22,7 +25,7 @@ class AuthService:
             password_hash=password_hash,
             first_name=first_name,
             last_name=last_name,
-            role ="USER"
+            role="USER"
         )
 
         return UserDAO.create(user)

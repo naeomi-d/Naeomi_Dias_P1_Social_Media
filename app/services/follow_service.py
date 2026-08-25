@@ -3,21 +3,22 @@ from app.models.follow import Follow
 from app.dao.user_dao import UserDAO
 from app.services.notification_service import NotificationService
 
-
+from app.exceptions.resource_exceptions import ResourceNotFoundError
+from app.exceptions.validation_exceptions import ValidationError
 class FollowService:
 
     @staticmethod
     def follow_user(follower_id, following_id):
 
         if follower_id == following_id:
-            raise ValueError(
+            raise ValidationError(
                 "You cannot follow yourself."
             )
 
         user = UserDAO.find_by_id(following_id)
 
         if not user:
-            raise ValueError(
+            raise ResourceNotFoundError(
                 "User not found."
             )
 
@@ -27,7 +28,7 @@ class FollowService:
         )
 
         if existing_follow:
-            raise ValueError(
+            raise ValidationError(
                 "You are already following this user."
             )
 
@@ -55,7 +56,7 @@ class FollowService:
         )
 
         if not existing_follow:
-            raise ValueError(
+            raise ValidationError(
                 "You are not following this user."
             )
 
@@ -74,17 +75,17 @@ class FollowService:
     @staticmethod
     def get_followers(user_id):
         if not UserDAO.find_by_id(user_id):
-            raise ValueError("User not found.")
+            raise ResourceNotFoundError("User not found.")
         return FollowDAO.get_followers(user_id)
 
     @staticmethod
     def get_following(user_id):
         if not UserDAO.find_by_id(user_id):
-            raise ValueError("User not found.")
+            raise ResourceNotFoundError("User not found.")
         return FollowDAO.get_following(user_id)
 
     @staticmethod
     def get_follow_status(follower_id, following_id):
         if not UserDAO.find_by_id(following_id):
-            raise ValueError("User not found.")
+            raise ResourceNotFoundError("User not found.")
         return FollowDAO.find_follow(follower_id, following_id)

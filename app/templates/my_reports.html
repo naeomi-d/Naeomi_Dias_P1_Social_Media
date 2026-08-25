@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Reports · Postly
+{% endblock %}
+
+{% block content %}
+
+<div class="social-page">
+
+    <div class="page-header">
+
+        <h1>My Reports</h1>
+
+        <p class="text-muted">
+            View the reports you have submitted and their current status.
+        </p>
+
+    </div>
+
+    {% for report in reports %}
+
+        <div class="card shadow-soft mb-3">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-start">
+
+                    <div>
+
+                        <h5 class="mb-2">
+                            Report #{{ report.id }}
+                        </h5>
+
+                        {% if report.post_id %}
+
+                            <p class="mb-1">
+                                <strong>Reported content:</strong>
+                                Post #{{ report.post_id }}
+                            </p>
+
+                        {% elif report.reported_user_id %}
+
+                            <p class="mb-1">
+                                <strong>Reported user:</strong>
+                                User #{{ report.reported_user_id }}
+                            </p>
+
+                        {% endif %}
+
+                        <p class="mb-1">
+                            <strong>Reason:</strong>
+                            {{ report.reason }}
+                        </p>
+
+                        {% if report.description %}
+
+                            <p class="mb-1">
+                                <strong>Description:</strong>
+                                {{ report.description }}
+                            </p>
+
+                        {% endif %}
+
+                        <p class="text-muted small mb-0">
+                            Submitted:
+                            {{ report.created_at }}
+                        </p>
+
+                    </div>
+
+
+                    <div>
+
+                        {% if report.status == "PENDING" %}
+
+                            <span class="badge bg-warning text-dark">
+                                Pending
+                            </span>
+
+                        {% elif report.status == "REVIEWED" %}
+
+                            <span class="badge bg-success">
+                                Reviewed
+                            </span>
+
+                        {% elif report.status == "REJECTED" %}
+
+                            <span class="badge bg-secondary">
+                                Rejected
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% else %}
+
+        <div class="card shadow-soft">
+
+            <div class="card-body text-center py-5">
+
+                <h4>
+                    No reports submitted
+                </h4>
+
+                <p class="text-muted mb-0">
+                    You haven't submitted any reports yet.
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

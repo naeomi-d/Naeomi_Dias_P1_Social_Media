@@ -16,8 +16,6 @@ follow_bp = Blueprint(
 )
 
 
-# ==================== JINJA FOLLOW ====================
-
 @follow_bp.route(
     "/users/<int:user_id>/follow",
     methods=["POST"]
@@ -45,8 +43,6 @@ def follow_user(user_id):
         url_for("home.home")
     )
 
-
-# ==================== JINJA UNFOLLOW ====================
 
 @follow_bp.route(
     "/users/<int:user_id>/unfollow",

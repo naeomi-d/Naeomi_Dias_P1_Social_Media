@@ -3,6 +3,8 @@ from app.dao.post_dao import PostDAO
 from app.models.like import Like
 from app.services.notification_service import NotificationService
 
+from app.exceptions.resource_exceptions import ResourceNotFoundError
+from app.exceptions.validation_exceptions import ValidationError
 
 class LikeService:
 
@@ -22,8 +24,12 @@ class LikeService:
         post = PostDAO.find_by_id(post_id)
 
         if not post:
-            raise ValueError(
+            raise ResourceNotFoundError(
                 "Post not found."
+            )
+        if post.status != "ACTIVE":
+            raise ValidationError(
+                "Cannot like an inactive post."
             )
 
         like = Like(
@@ -51,7 +57,7 @@ class LikeService:
         )
 
         if not like:
-            raise ValueError(
+            raise ValidationError(
                 "You have not liked this post."
             )
 
@@ -61,7 +67,7 @@ class LikeService:
     def get_like_count(post_id):
         post = PostDAO.find_by_id(post_id)
         if not post or post.status != "ACTIVE":
-            raise ValueError("Post not found.")
+            raise ResourceNotFoundError("Post not found.")
         return LikeDAO.count_by_post(post_id)
 
     @staticmethod

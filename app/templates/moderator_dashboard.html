@@ -1,0 +1,368 @@
+{% extends "base.html" %}
+
+{% block title %}Moderator Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="page-header mb-4">
+
+    <h1>Moderator Dashboard</h1>
+
+    <p class="text-muted">
+        Review community reports and take appropriate moderation actions.
+    </p>
+
+</div>
+
+<div class="row g-3 mb-4">
+
+    <div class="col-md-4">
+
+        <div class="dashboard-card h-100">
+
+            <small class="text-muted">
+                Pending Reports
+            </small>
+
+            <h2 class="mt-2 mb-0">
+                {{ reports|length }}
+            </h2>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-md-4">
+
+        <div class="dashboard-card h-100">
+
+            <small class="text-muted">
+                Your Role
+            </small>
+
+            <h2 class="mt-2 mb-0">
+                Moderator
+            </h2>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="alert alert-info mb-4">
+
+    <strong>Moderation workflow:</strong>
+
+    <span>
+        Review the reported content or account before taking action.
+        Dismiss reports that do not violate platform rules.
+        Remove content or deactivate accounts only when appropriate.
+    </span>
+
+</div>
+
+<div class="dashboard-card">
+
+    <div class="mb-3">
+
+        <h2 class="h4 mb-1">
+            Pending Reports
+        </h2>
+
+        <p class="text-muted mb-0">
+            Reports submitted by community members that require review.
+        </p>
+
+    </div>
+
+
+    {% if reports %}
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>Report</th>
+                        <th>Reporter</th>
+                        <th>Target</th>
+                        <th>Reason</th>
+                        <th>Description</th>
+                        <th>Submitted</th>
+                        <th class="text-end">Actions</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for report in reports %}
+
+                        <tr>
+
+                            <td>
+
+                                <span class="badge text-bg-dark">
+                                    #{{ report.id }}
+                                </span>
+
+                                <div class="mt-1">
+
+                                    <small class="text-muted">
+                                        {{ report.status }}
+                                    </small>
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+    {% if report.reporter %}
+
+        <a
+            href="{{ url_for(
+                'home.user_profile',
+                user_id=report.reporter.id
+            ) }}"
+            class="text-decoration-none"
+        >
+            @{{ report.reporter.username }}
+        </a>
+
+    {% else %}
+
+        <span class="text-muted">
+            Unknown User
+        </span>
+
+    {% endif %}
+
+</td>
+
+
+                            <td>
+
+                                {% if report.post_id %}
+
+                                    <span class="badge text-bg-primary">
+    Post #{{ report.post_id }}
+</span>
+
+{% if report.post and report.post.user %}
+
+    <div class="mt-1">
+
+        <small class="text-muted">
+            by @{{ report.post.user.username }}
+        </small>
+
+    </div>
+
+{% endif %}
+
+                                    <div class="mt-2">
+
+                                        <a
+                                            href="{{ url_for(
+                                                'moderator.report_detail',
+                                                report_id=report.id
+                                            ) }}"
+                                            class="btn btn-outline-primary btn-sm"
+                                        >
+                                            Review Report
+                                        </a>
+
+                                    </div>
+
+
+                                {% elif report.reported_user_id %}
+
+    <span class="badge text-bg-secondary">
+
+        {% if report.reported_user %}
+
+            @{{ report.reported_user.username }}
+
+        {% else %}
+
+            User #{{ report.reported_user_id }}
+
+        {% endif %}
+
+    </span>
+
+    <div class="mt-2">
+
+        <a
+            href="{{ url_for(
+                'home.user_profile',
+                user_id=report.reported_user_id
+            ) }}"
+            class="btn btn-outline-secondary btn-sm"
+        >
+            View Profile
+        </a>
+
+    </div>
+
+
+                                {% else %}
+
+                                    <span class="badge text-bg-dark">
+                                        Unknown Target
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <strong>
+                                    {{ report.reason }}
+                                </strong>
+
+                            </td>
+
+
+                            <td style="min-width: 220px;">
+
+                                {% if report.description %}
+
+                                    {{ report.description }}
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        No description provided.
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <small class="text-muted">
+
+                                    {{ report.created_at | ist_datetime }}
+
+                                </small>
+
+                            </td>
+
+
+                            <td class="text-end">
+
+                                <div
+                                    class="d-flex flex-column gap-2"
+                                    style="min-width: 170px;"
+                                >
+
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for(
+                                            'moderator.dismiss_report',
+                                            report_id=report.id
+                                        ) }}"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-outline-secondary btn-sm w-100"
+                                        >
+                                            Dismiss Report
+                                        </button>
+
+                                    </form>
+
+
+                                    {% if report.post_id %}
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for(
+                                                'moderator.remove_reported_post',
+                                                report_id=report.id
+                                            ) }}"
+                                        >
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger btn-sm w-100"
+                                            >
+                                                Remove Post
+                                            </button>
+
+                                        </form>
+
+                                    {% endif %}
+
+
+                                    {% if report.reported_user_id %}
+
+                                        <form
+                                            method="POST"
+                                            action="{{ url_for(
+                                                'moderator.deactivate_reported_user',
+                                                report_id=report.id
+                                            ) }}"
+                                        >
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-danger btn-sm w-100"
+                                            >
+                                                Deactivate User
+                                            </button>
+
+                                        </form>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+    {% else %}
+
+        <div class="empty-state text-center py-5">
+
+            <h3 class="h5">
+                No pending reports
+            </h3>
+
+            <p class="text-muted mb-0">
+                There are currently no reports waiting for moderation.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

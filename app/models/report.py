@@ -18,6 +18,7 @@ class Report(db.Model):
         nullable=False
     )
 
+
     reported_user_id = db.Column(
         db.BigInteger,
         db.ForeignKey("users.id", ondelete="RESTRICT"),
@@ -46,6 +47,7 @@ class Report(db.Model):
         default="PENDING"
     )
 
+    
     reviewed_by = db.Column(
         db.BigInteger,
         db.ForeignKey("users.id", ondelete="RESTRICT"),
@@ -61,6 +63,31 @@ class Report(db.Model):
         db.DateTime,
         nullable=False,
         default=datetime.utcnow
+    )
+
+
+    reporter = db.relationship(
+        "User",
+        foreign_keys=[reporter_id],
+        backref="submitted_reports"
+    )
+
+    reported_user = db.relationship(
+        "User",
+        foreign_keys=[reported_user_id],
+        backref="received_reports"
+    )
+
+    reviewer = db.relationship(
+        "User",
+        foreign_keys=[reviewed_by],
+        backref="reviewed_reports"
+    )
+
+    post = db.relationship(
+        "Post",
+        foreign_keys=[post_id],
+        backref="reports"
     )
 
     __table_args__ = (
