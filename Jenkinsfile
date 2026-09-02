@@ -28,7 +28,7 @@ pipeline{
         }
         stage('Build Docker Image'){
             steps{
-                sh 'docker build -t naeomi/flask-app:latest'
+                sh '/usr/local/bin/docker build -t naeomi/flask-app:latest .'
             }
         }
         stage('Push to Docker Hub'){
@@ -41,8 +41,8 @@ pipeline{
                     )
                 ]){
                     sh '''
-                        echo "$DOCKER_PASS"| docker login -u "$DOCKER_USER" --password-stdin
-                        docker push naeomi/flask-app:latest
+                        echo "$DOCKER_PASS"| /usr/local/bin/docker login -u "$DOCKER_USER" --password-stdin
+                        /usr/local/bin/docker push naeomi/flask-app:latest
                     '''
                 }
             }
