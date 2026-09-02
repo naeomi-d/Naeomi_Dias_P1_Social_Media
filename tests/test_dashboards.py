@@ -100,10 +100,6 @@ def test_moderator_review_report_action(
 
     assert res.status_code == 200
 
-    # --------------------------------------------------------
-    # Verify report was reviewed
-    # --------------------------------------------------------
-
     updated_report = ReportService.get_report(
         report.id,
         test_moderator.id,
@@ -112,10 +108,6 @@ def test_moderator_review_report_action(
 
     assert updated_report.status == "REVIEWED"
     assert updated_report.reviewed_by == test_moderator.id
-
-    # --------------------------------------------------------
-    # Verify database audit trail
-    # --------------------------------------------------------
 
     logs = AdminAuditLogService.get_logs()
 

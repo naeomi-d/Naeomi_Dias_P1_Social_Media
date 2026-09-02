@@ -45,7 +45,6 @@ class ModeratorService:
 
         ReportDAO.update(report)
 
-        # Database audit trail
         AdminAuditLogService.record(
             admin_id=moderator_id,
             action="DISMISS_REPORT",
