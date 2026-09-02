@@ -10,7 +10,7 @@ pipeline{
         }
         stage('Install Dependencies'){
             steps{
-                sh 'pip install -r requirements.txt'
+                sh '/opt/homebrew/bin/python3 -m pip install -r requirements.txt'
             }
         }
 
