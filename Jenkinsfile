@@ -20,7 +20,10 @@ pipeline{
 
         stage('Test'){
             steps{
-                sh '.venv/bin/pytest'
+                sh '''
+            export PYTHONPATH="$WORKSPACE"
+            .venv/bin/pytest
+        '''
             }
         }
         stage('Build Docker Image'){
