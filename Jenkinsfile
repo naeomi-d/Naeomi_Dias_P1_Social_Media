@@ -10,13 +10,17 @@ pipeline{
         }
         stage('Install Dependencies'){
             steps{
-                sh '/opt/homebrew/bin/python3 -m pip install -r requirements.txt'
+                sh '''
+            /opt/homebrew/bin/python3 -m venv .venv
+            .venv/bin/python -m pip install --upgrade pip
+            .venv/bin/pip install -r requirements.txt
+        '''
             }
         }
 
         stage('Test'){
             steps{
-                sh 'pytest'
+                sh '.venv/bin/pytest'
             }
         }
         stage('Build Docker Image'){
