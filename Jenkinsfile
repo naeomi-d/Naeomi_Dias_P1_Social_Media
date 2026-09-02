@@ -66,7 +66,7 @@ pipeline{
                         <b>URL</b>: ${env.BUILD_URL}
                     </p>
                 """,
-                to: "arulanandha.guru@revature.com"
+                to: "naeomidias6@gmail.com"
             )
         }
 
@@ -79,7 +79,7 @@ pipeline{
                         <b>URL</b>: ${env.BUILD_URL}
                     </p>
                 """,
-                to: "arulanandha.guru@revature.com"
+                to: "naeomidias6@gmail.com"
             )
         }
     }
